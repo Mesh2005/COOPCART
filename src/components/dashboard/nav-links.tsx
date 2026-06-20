@@ -12,11 +12,13 @@ export function NavLinks({
   base,
   className,
   onNavigate,
+  dark,
 }: {
   items: NavItem[];
   base: string;
   className?: string;
   onNavigate?: () => void;
+  dark?: boolean;
 }) {
   const pathname = usePathname();
   return (
@@ -31,10 +33,16 @@ export function NavLinks({
             onClick={onNavigate}
             className={cn(
               "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors",
-              active ? "bg-brown-600 text-cream shadow-sm" : "text-brown-700 hover:bg-brown-50",
+              dark
+                ? active
+                  ? "bg-white/15 text-cream"
+                  : "text-brown-100/80 hover:bg-white/10 hover:text-cream"
+                : active
+                  ? "bg-brown-600 text-cream shadow-sm"
+                  : "text-brown-700 hover:bg-brown-50",
             )}
           >
-            <item.icon className="h-[18px] w-[18px]" />
+            <item.icon className="h-[18px] w-[18px] flex-shrink-0" />
             <span>{item.label}</span>
           </Link>
         );

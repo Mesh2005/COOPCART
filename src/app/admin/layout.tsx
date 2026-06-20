@@ -44,18 +44,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           </span>
         </Link>
         <div className="px-3">
-          <nav className="flex flex-col gap-1">
-            {items.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-brown-100/85 transition-colors hover:bg-white/10 hover:text-cream"
-              >
-                <item.icon className="h-[18px] w-[18px]" />
-                {item.label}
-              </Link>
-            ))}
-          </nav>
+          <NavLinks items={items} base="/admin" dark />
         </div>
       </aside>
 
