@@ -4,6 +4,8 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight, BadgeCheck, Egg, Truck, Wallet } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
+import { PixelTrail } from "@/components/ui/pixel-trail";
+import { useScreenSize } from "@/components/hooks/use-screen-size";
 import { cn } from "@/lib/utils";
 import { EggTray } from "./egg-tray";
 
@@ -16,12 +18,23 @@ const fadeUp = (delay = 0) => ({
 });
 
 export function Hero() {
+  const screenSize = useScreenSize();
+
   return (
     <section className="relative overflow-hidden">
       <div className="glow-warm pointer-events-none absolute inset-x-0 top-0 h-[420px]" />
       <div className="bg-grain pointer-events-none absolute inset-0 opacity-70" />
 
-      <div className="relative mx-auto grid w-full max-w-7xl items-center gap-12 px-5 py-20 sm:px-8 lg:grid-cols-2 lg:py-28">
+      {/* Interactive pixel-trail background — fades dots in the cursor's wake */}
+      <PixelTrail
+        pixelSize={screenSize.lessThan("md") ? 44 : 64}
+        fadeDuration={600}
+        delay={0}
+        className="z-0"
+        pixelClassName="rounded-full bg-yolk-300/55"
+      />
+
+      <div className="pointer-events-none relative z-10 mx-auto grid w-full max-w-7xl items-center gap-12 px-5 py-20 sm:px-8 lg:grid-cols-2 lg:py-28">
         <div>
           <motion.div
             {...fadeUp(0)}
@@ -46,7 +59,7 @@ export function Hero() {
             tray, and delivered on a schedule your shop, bakery, or kitchen can count on.
           </motion.p>
 
-          <motion.div {...fadeUp(0.18)} className="mt-8 flex flex-wrap items-center gap-3">
+          <motion.div {...fadeUp(0.18)} className="pointer-events-auto mt-8 flex flex-wrap items-center gap-3">
             <Link href="/register" className={cn(buttonVariants({ size: "lg" }))}>
               Register your business <ArrowRight className="h-4 w-4" />
             </Link>
@@ -78,7 +91,7 @@ export function Hero() {
           initial={{ opacity: 0, scale: 0.92, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.1, ease: EASE }}
-          className="relative mx-auto w-full max-w-md"
+          className="pointer-events-auto relative mx-auto w-full max-w-md"
         >
           <EggTray />
 
