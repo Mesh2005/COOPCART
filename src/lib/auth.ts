@@ -29,9 +29,10 @@ export async function requireProfile(): Promise<Profile> {
   return profile;
 }
 
-/** Require a staff role; redirect customers to /app, anon to /login. */
+/** Require a staff role; redirect customers to /app, anon to the admin login. */
 export async function requireStaff(): Promise<Profile> {
-  const profile = await requireProfile();
+  const profile = await getCurrentProfile();
+  if (!profile) redirect("/admin/login");
   if (!(STAFF_ROLES as readonly string[]).includes(profile.role)) redirect("/app");
   return profile;
 }

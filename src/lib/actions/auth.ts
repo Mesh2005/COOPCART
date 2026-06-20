@@ -20,26 +20,50 @@ export async function loginAction(_prev: ActionState, formData: FormData): Promi
   if (!parsed.success) return { error: "Please enter a valid email and password." };
 
   const supabase = await createSupabaseServerClient();
+  const { error } = await supabase.auth.signInWithPassword(parsed.data);
+  if (error) return { error: error.message };
+
+  // Customer login always lands in the customer portal. (Staff who sign in
+  // here are bounced to /admin by the /app layout guard.) An explicit
+  // /app deep-link is respected.
+  const next = String(formData.get("next") ?? "");
+  redirect(next.startsWith("/app") ? next : "/app");
+}
+
+/**
+ * Staff-only login for the admin console. Rejects (and signs out) any
+ * account that does not hold a staff role so customers can't reach /admin.
+ */
+export async function adminLoginAction(
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const parsed = loginSchema.safeParse({
+    email: formData.get("email"),
+    password: formData.get("password"),
+  });
+  if (!parsed.success) return { error: "Please enter a valid email and password." };
+
+  const supabase = await createSupabaseServerClient();
   const { data: signIn, error } = await supabase.auth.signInWithPassword(parsed.data);
   if (error) return { error: error.message };
 
-  // Respect an explicit deep-link destination if one was provided.
-  const next = String(formData.get("next") ?? "");
-  if (next.startsWith("/")) redirect(next);
+  const { data: prof } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", signIn.user!.id)
+    .maybeSingle();
 
-  // Otherwise route by role: staff → admin console, customers → portal.
-  let isStaff = false;
-  if (signIn.user) {
-    const { data: prof } = await supabase
-      .from("profiles")
-      .select("role")
-      .eq("id", signIn.user.id)
-      .maybeSingle();
-    isStaff = prof
-      ? (STAFF_ROLES as readonly string[]).includes(prof.role)
-      : false;
+  if (!prof || !(STAFF_ROLES as readonly string[]).includes(prof.role)) {
+    await supabase.auth.signOut();
+    return {
+      error:
+        "This account isn’t authorised for the admin console. Please use the customer login.",
+    };
   }
-  redirect(isStaff ? "/admin" : "/app");
+
+  const next = String(formData.get("next") ?? "");
+  redirect(next.startsWith("/admin") && next !== "/admin/login" ? next : "/admin");
 }
 
 const registerSchema = z.object({

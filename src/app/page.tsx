@@ -355,7 +355,12 @@ export default function Home() {
         <div className="border-t border-line">
           <div className={cn(SHELL, "flex flex-col items-center justify-between gap-3 py-6 text-sm text-muted sm:flex-row")}>
             <p>© {new Date().getFullYear()} Abeyrathna Farms. All rights reserved.</p>
-            <p>Prices in LKR · Cash on delivery &amp; bank transfer</p>
+            <div className="flex items-center gap-4">
+              <span>Prices in LKR · COD &amp; bank transfer</span>
+              <Link href="/admin" className="font-medium text-brown-500 hover:text-brown-700">
+                Staff login
+              </Link>
+            </div>
           </div>
         </div>
       </footer>

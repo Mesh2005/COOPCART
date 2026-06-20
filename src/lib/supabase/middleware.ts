@@ -36,19 +36,33 @@ export async function updateSession(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   const path = request.nextUrl.pathname;
-  const isProtected = path.startsWith("/app") || path.startsWith("/admin");
-  const isAuthPage = path === "/login" || path === "/register";
+  const isAppArea = path.startsWith("/app");
+  const isAdminLogin = path === "/admin/login";
+  const isAdminArea = path.startsWith("/admin") && !isAdminLogin;
+  const isCustomerAuthPage = path === "/login" || path === "/register";
 
-  if (!user && isProtected) {
-    const redirectUrl = request.nextUrl.clone();
-    redirectUrl.pathname = "/login";
-    redirectUrl.searchParams.set("next", path);
-    return NextResponse.redirect(redirectUrl);
+  // Unauthenticated → send to the matching login, preserving the target.
+  if (!user) {
+    if (isAppArea || isAdminArea) {
+      const redirectUrl = request.nextUrl.clone();
+      redirectUrl.pathname = isAdminArea ? "/admin/login" : "/login";
+      redirectUrl.search = "";
+      redirectUrl.searchParams.set("next", path);
+      return NextResponse.redirect(redirectUrl);
+    }
+    return response;
   }
 
-  if (user && isAuthPage) {
+  // Authenticated → keep users off the login screens.
+  if (isCustomerAuthPage) {
     const redirectUrl = request.nextUrl.clone();
     redirectUrl.pathname = "/app";
+    redirectUrl.search = "";
+    return NextResponse.redirect(redirectUrl);
+  }
+  if (isAdminLogin) {
+    const redirectUrl = request.nextUrl.clone();
+    redirectUrl.pathname = "/admin";
     redirectUrl.search = "";
     return NextResponse.redirect(redirectUrl);
   }
