@@ -1,0 +1,120 @@
+@import "tailwindcss";
+
+/* ------------------------------------------------------------------ *
+ * CoopCart design tokens — warm farm browns, golden yolk, fresh sage *
+ * ------------------------------------------------------------------ */
+@theme {
+  --color-cream: #fbf7f0;
+  --color-surface: #ffffff;
+  --color-ink: #2a231d;
+  --color-muted: #8a7b6c;
+  --color-line: #eae0d2;
+
+  --color-brown-50: #f8f1e8;
+  --color-brown-100: #eeddc9;
+  --color-brown-200: #ddc2a1;
+  --color-brown-300: #c7a074;
+  --color-brown-400: #ac7f50;
+  --color-brown-500: #8b5e34;
+  --color-brown-600: #6f4a2e;
+  --color-brown-700: #573a26;
+  --color-brown-800: #3d2a1c;
+  --color-brown-900: #2a1d14;
+
+  --color-yolk-100: #fcefc7;
+  --color-yolk-200: #fbe2a6;
+  --color-yolk-300: #f8cf6b;
+  --color-yolk-400: #f2b441;
+  --color-yolk-500: #e29a1f;
+
+  --color-sage-200: #d6e2cb;
+  --color-sage-300: #a7c194;
+  --color-sage-400: #7da06a;
+  --color-sage-500: #6b8e5a;
+  --color-sage-600: #4f6b43;
+
+  --color-success: #5b8c5a;
+  --color-warning: #e0a82e;
+  --color-danger: #c0492f;
+  --color-info: #3e6b8a;
+
+  --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-display: var(--font-fraunces), ui-serif, Georgia, serif;
+
+  --ease-soft: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@layer base {
+  *,
+  ::before,
+  ::after {
+    border-color: var(--color-line);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-cream);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+
+  ::selection {
+    background: var(--color-yolk-200);
+    color: var(--color-brown-900);
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  .text-pretty {
+    text-wrap: pretty;
+  }
+  .bg-grain {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  }
+  .glow-warm {
+    background: radial-gradient(60% 60% at 50% 0%, rgba(242, 180, 65, 0.2), transparent 70%);
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-7px);
+  }
+}
+
+.animate-float {
+  animation: float 4.5s var(--ease-soft) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
