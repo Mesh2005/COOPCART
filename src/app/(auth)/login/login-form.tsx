@@ -20,7 +20,7 @@ export function LoginForm({ next, status }: { next?: string; status?: string }) 
       )}
       {state.error && <Alert variant="error">{state.error}</Alert>}
 
-      <input type="hidden" name="next" value={next ?? "/app"} />
+      <input type="hidden" name="next" value={next ?? ""} />
 
       <Field label="Email" htmlFor="email">
         <Input id="email" name="email" type="email" autoComplete="email" placeholder="you@business.lk" required />

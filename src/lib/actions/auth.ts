@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
-import { BUSINESS_TYPES } from "@/lib/types";
+import { BUSINESS_TYPES, STAFF_ROLES } from "@/lib/types";
 import type { ActionState } from "./state";
 
 const loginSchema = z.object({
@@ -20,11 +20,26 @@ export async function loginAction(_prev: ActionState, formData: FormData): Promi
   if (!parsed.success) return { error: "Please enter a valid email and password." };
 
   const supabase = await createSupabaseServerClient();
-  const { error } = await supabase.auth.signInWithPassword(parsed.data);
+  const { data: signIn, error } = await supabase.auth.signInWithPassword(parsed.data);
   if (error) return { error: error.message };
 
-  const next = String(formData.get("next") ?? "/app");
-  redirect(next.startsWith("/") ? next : "/app");
+  // Respect an explicit deep-link destination if one was provided.
+  const next = String(formData.get("next") ?? "");
+  if (next.startsWith("/")) redirect(next);
+
+  // Otherwise route by role: staff → admin console, customers → portal.
+  let isStaff = false;
+  if (signIn.user) {
+    const { data: prof } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", signIn.user.id)
+      .maybeSingle();
+    isStaff = prof
+      ? (STAFF_ROLES as readonly string[]).includes(prof.role)
+      : false;
+  }
+  redirect(isStaff ? "/admin" : "/app");
 }
 
 const registerSchema = z.object({

@@ -1,12 +1,16 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { Egg } from "lucide-react";
 import { getMyBusiness, requireProfile } from "@/lib/auth";
+import { STAFF_ROLES } from "@/lib/types";
 import { NavLinks } from "@/components/dashboard/nav-links";
 import { LogoutButton } from "@/components/dashboard/logout-button";
 import { PageTransition } from "@/components/ui/page-transition";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const profile = await requireProfile();
+  // Staff belong in the admin console, not the customer portal.
+  if ((STAFF_ROLES as readonly string[]).includes(profile.role)) redirect("/admin");
   const business = await getMyBusiness();
 
   return (
