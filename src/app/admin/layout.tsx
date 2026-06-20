@@ -1,33 +1,9 @@
 import Link from "next/link";
-import {
-  BarChart3,
-  Boxes,
-  ClipboardList,
-  Egg,
-  LayoutDashboard,
-  Settings,
-  Truck,
-  UserCog,
-  Users,
-  Wallet,
-} from "lucide-react";
+import { Egg } from "lucide-react";
 import { requireStaff } from "@/lib/auth";
-import { NavLinks, type NavItem } from "@/components/dashboard/nav-links";
+import { NavLinks } from "@/components/dashboard/nav-links";
 import { LogoutButton } from "@/components/dashboard/logout-button";
 import { PageTransition } from "@/components/ui/page-transition";
-
-const items: NavItem[] = [
-  { href: "/admin", label: "Overview", icon: LayoutDashboard },
-  { href: "/admin/orders", label: "Orders", icon: ClipboardList },
-  { href: "/admin/payments", label: "Payments", icon: Wallet },
-  { href: "/admin/products", label: "Products", icon: Egg },
-  { href: "/admin/inventory", label: "Inventory", icon: Boxes },
-  { href: "/admin/customers", label: "Customers", icon: Users },
-  { href: "/admin/delivery", label: "Delivery", icon: Truck },
-  { href: "/admin/reports", label: "Reports", icon: BarChart3 },
-  { href: "/admin/staff", label: "Staff", icon: UserCog },
-  { href: "/admin/settings", label: "Settings", icon: Settings },
-];
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const profile = await requireStaff();
@@ -45,7 +21,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           </span>
         </Link>
         <div className="px-3">
-          <NavLinks items={items} base="/admin" dark />
+          <NavLinks section="admin" dark />
         </div>
       </aside>
 
@@ -59,7 +35,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         </header>
 
         <div className="border-b border-line bg-surface/40 px-3 py-2 lg:hidden">
-          <NavLinks items={items} base="/admin" className="flex-row overflow-x-auto" />
+          <NavLinks section="admin" className="flex-row overflow-x-auto" />
         </div>
 
         <main id="main-content" className="flex-1 px-5 py-6 sm:px-8 sm:py-8">

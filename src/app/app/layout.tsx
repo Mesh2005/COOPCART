@@ -1,18 +1,9 @@
 import Link from "next/link";
-import { Building2, ClipboardList, Egg, LayoutDashboard, ShoppingBasket, ShoppingCart, Wallet } from "lucide-react";
+import { Egg } from "lucide-react";
 import { getMyBusiness, requireProfile } from "@/lib/auth";
-import { NavLinks, type NavItem } from "@/components/dashboard/nav-links";
+import { NavLinks } from "@/components/dashboard/nav-links";
 import { LogoutButton } from "@/components/dashboard/logout-button";
 import { PageTransition } from "@/components/ui/page-transition";
-
-const items: NavItem[] = [
-  { href: "/app", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/app/catalog", label: "Catalogue", icon: ShoppingBasket },
-  { href: "/app/cart", label: "Cart", icon: ShoppingCart },
-  { href: "/app/orders", label: "Orders", icon: ClipboardList },
-  { href: "/app/payments", label: "Payments", icon: Wallet },
-  { href: "/app/profile", label: "Business profile", icon: Building2 },
-];
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const profile = await requireProfile();
@@ -31,7 +22,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           </span>
         </Link>
         <div className="px-3">
-          <NavLinks items={items} base="/app" />
+          <NavLinks section="app" />
         </div>
       </aside>
 
@@ -47,7 +38,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         </header>
 
         <div className="border-b border-line bg-surface/40 px-3 py-2 lg:hidden">
-          <NavLinks items={items} base="/app" className="flex-row overflow-x-auto" />
+          <NavLinks section="app" className="flex-row overflow-x-auto" />
         </div>
 
         <main id="main-content" className="flex-1 px-5 py-6 sm:px-8 sm:py-8">

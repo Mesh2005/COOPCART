@@ -2,35 +2,87 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import type { LucideIcon } from "lucide-react";
+import {
+  BarChart3,
+  Boxes,
+  Building2,
+  ClipboardList,
+  LayoutDashboard,
+  Settings,
+  ShoppingBasket,
+  ShoppingCart,
+  Truck,
+  UserCog,
+  Users,
+  Wallet,
+  type LucideIcon,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export type NavItem = { href: string; label: string; icon: LucideIcon };
+type NavItem = { href: string; label: string; icon: LucideIcon };
+
+/**
+ * Nav configuration lives inside this client component so the icon
+ * components are bundled client-side. Passing Lucide icons from a Server
+ * Component (the layout) as props would cross the server/client boundary
+ * and throw "Only plain objects can be passed to Client Components".
+ */
+const NAVS: Record<"admin" | "app", { base: string; items: NavItem[] }> = {
+  admin: {
+    base: "/admin",
+    items: [
+      { href: "/admin", label: "Overview", icon: LayoutDashboard },
+      { href: "/admin/orders", label: "Orders", icon: ClipboardList },
+      { href: "/admin/payments", label: "Payments", icon: Wallet },
+      { href: "/admin/products", label: "Products", icon: ShoppingBasket },
+      { href: "/admin/inventory", label: "Inventory", icon: Boxes },
+      { href: "/admin/customers", label: "Customers", icon: Users },
+      { href: "/admin/delivery", label: "Delivery", icon: Truck },
+      { href: "/admin/reports", label: "Reports", icon: BarChart3 },
+      { href: "/admin/staff", label: "Staff", icon: UserCog },
+      { href: "/admin/settings", label: "Settings", icon: Settings },
+    ],
+  },
+  app: {
+    base: "/app",
+    items: [
+      { href: "/app", label: "Dashboard", icon: LayoutDashboard },
+      { href: "/app/catalog", label: "Catalogue", icon: ShoppingBasket },
+      { href: "/app/cart", label: "Cart", icon: ShoppingCart },
+      { href: "/app/orders", label: "Orders", icon: ClipboardList },
+      { href: "/app/payments", label: "Payments", icon: Wallet },
+      { href: "/app/profile", label: "Business profile", icon: Building2 },
+    ],
+  },
+};
 
 export function NavLinks({
-  items,
-  base,
+  section,
   className,
   onNavigate,
   dark,
 }: {
-  items: NavItem[];
-  base: string;
+  section: "admin" | "app";
   className?: string;
   onNavigate?: () => void;
   dark?: boolean;
 }) {
   const pathname = usePathname();
+  const { base, items } = NAVS[section];
+
   return (
     <nav className={cn("flex flex-col gap-1", className)}>
       {items.map((item) => {
         const active =
-          item.href === base ? pathname === item.href : pathname.startsWith(item.href);
+          item.href === base
+            ? pathname === item.href
+            : pathname.startsWith(item.href);
         return (
           <Link
             key={item.href}
             href={item.href}
             onClick={onNavigate}
+            aria-current={active ? "page" : undefined}
             className={cn(
               "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors",
               dark
