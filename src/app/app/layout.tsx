@@ -3,6 +3,7 @@ import { Building2, ClipboardList, Egg, LayoutDashboard, ShoppingBasket, Shoppin
 import { getMyBusiness, requireProfile } from "@/lib/auth";
 import { NavLinks, type NavItem } from "@/components/dashboard/nav-links";
 import { LogoutButton } from "@/components/dashboard/logout-button";
+import { PageTransition } from "@/components/ui/page-transition";
 
 const items: NavItem[] = [
   { href: "/app", label: "Dashboard", icon: LayoutDashboard },
@@ -49,7 +50,9 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           <NavLinks items={items} base="/app" className="flex-row overflow-x-auto" />
         </div>
 
-        <main className="flex-1 px-5 py-6 sm:px-8 sm:py-8">{children}</main>
+        <main id="main-content" className="flex-1 px-5 py-6 sm:px-8 sm:py-8">
+          <PageTransition>{children}</PageTransition>
+        </main>
       </div>
     </div>
   );

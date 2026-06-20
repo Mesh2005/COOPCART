@@ -35,15 +35,15 @@ export default async function AdminOverview() {
         </p>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <div className="stagger grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {modules.map((m) => (
           <Link
             key={m.href}
             href={m.href}
-            className="group rounded-2xl border border-line bg-surface p-5 transition-all hover:-translate-y-0.5 hover:shadow-md"
+            className="card-hover group rounded-2xl border border-line bg-surface p-5"
           >
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-brown-50 text-brown-500 transition-colors group-hover:bg-yolk-200 group-hover:text-brown-700">
-              <m.icon className="h-5 w-5" />
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-brown-50 text-brown-500 transition-colors duration-300 group-hover:bg-yolk-200 group-hover:text-brown-700">
+              <m.icon className="h-5 w-5 transition-transform duration-300 group-hover:scale-110" />
             </div>
             <p className="mt-4 font-semibold text-brown-900">{m.label}</p>
             <p className="mt-1 text-sm text-muted">{m.desc}</p>

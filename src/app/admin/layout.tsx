@@ -14,6 +14,7 @@ import {
 import { requireStaff } from "@/lib/auth";
 import { NavLinks, type NavItem } from "@/components/dashboard/nav-links";
 import { LogoutButton } from "@/components/dashboard/logout-button";
+import { PageTransition } from "@/components/ui/page-transition";
 
 const items: NavItem[] = [
   { href: "/admin", label: "Overview", icon: LayoutDashboard },
@@ -61,7 +62,9 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           <NavLinks items={items} base="/admin" className="flex-row overflow-x-auto" />
         </div>
 
-        <main className="flex-1 px-5 py-6 sm:px-8 sm:py-8">{children}</main>
+        <main id="main-content" className="flex-1 px-5 py-6 sm:px-8 sm:py-8">
+          <PageTransition>{children}</PageTransition>
+        </main>
       </div>
     </div>
   );

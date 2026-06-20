@@ -90,7 +90,7 @@ export default function Home() {
   return (
     <>
       <SiteHeader />
-      <main>
+      <main id="main-content">
         <Hero />
 
         {/* Stat band */}

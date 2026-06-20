@@ -28,12 +28,12 @@ export default async function CustomerDashboard() {
               </p>
             </div>
           </div>
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="stagger grid gap-4 sm:grid-cols-2">
             <Link
               href="/app/catalog"
-              className="group rounded-2xl border border-line bg-surface p-6 transition-all hover:-translate-y-0.5 hover:shadow-md"
+              className="card-hover group rounded-2xl border border-line bg-surface p-6"
             >
-              <ShoppingBasket className="h-7 w-7 text-brown-500" />
+              <ShoppingBasket className="h-7 w-7 text-brown-500 transition-transform duration-300 group-hover:scale-110" />
               <p className="mt-4 font-semibold text-brown-900">Browse the catalogue</p>
               <p className="mt-1 text-sm text-muted">Order brown eggs by the tray with live bulk pricing.</p>
               <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-brown-600">
@@ -42,9 +42,9 @@ export default async function CustomerDashboard() {
             </Link>
             <Link
               href="/app/orders"
-              className="group rounded-2xl border border-line bg-surface p-6 transition-all hover:-translate-y-0.5 hover:shadow-md"
+              className="card-hover group rounded-2xl border border-line bg-surface p-6"
             >
-              <Clock className="h-7 w-7 text-brown-500" />
+              <Clock className="h-7 w-7 text-brown-500 transition-transform duration-300 group-hover:scale-110" />
               <p className="mt-4 font-semibold text-brown-900">Track your orders</p>
               <p className="mt-1 text-sm text-muted">Follow each order from confirmation to delivery.</p>
               <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-brown-600">

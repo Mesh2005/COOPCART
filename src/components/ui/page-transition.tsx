@@ -1,0 +1,22 @@
+"use client";
+
+import { usePathname } from "next/navigation";
+import { motion } from "framer-motion";
+
+/**
+ * Wraps dashboard/admin page content so each route change fades + lifts in
+ * smoothly. Keyed on pathname so navigation re-triggers the animation.
+ */
+export function PageTransition({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+  return (
+    <motion.div
+      key={pathname}
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+    >
+      {children}
+    </motion.div>
+  );
+}

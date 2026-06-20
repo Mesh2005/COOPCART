@@ -30,7 +30,7 @@ export default async function ProductsPage() {
   return (
     <>
       <SiteHeader />
-      <main className="mx-auto w-full max-w-7xl px-5 py-16 sm:px-8">
+      <main id="main-content" className="mx-auto w-full max-w-7xl px-5 py-16 sm:px-8">
         <Badge variant="sage">Catalogue</Badge>
         <h1 className="mt-4 text-4xl text-brown-900">Wholesale brown eggs</h1>
         <p className="mt-3 max-w-2xl text-pretty text-muted">
@@ -38,11 +38,14 @@ export default async function ProductsPage() {
           account to see live wholesale pricing and place orders.
         </p>
 
-        <div className="mt-10 grid gap-6 md:grid-cols-3">
+        <div className="stagger mt-10 grid gap-6 md:grid-cols-3">
           {items.map((p) => (
-            <div key={p.id} className="rounded-3xl border border-line bg-surface p-7">
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-brown-50 text-brown-500">
-                <Egg className="h-7 w-7" />
+            <div
+              key={p.id}
+              className="card-hover group rounded-3xl border border-line bg-surface p-7"
+            >
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-brown-50 text-brown-500 transition-all duration-300 group-hover:bg-yolk-200 group-hover:text-brown-700">
+                <Egg className="h-7 w-7 transition-transform duration-300 group-hover:scale-110" />
               </div>
               <h2 className="mt-5 text-xl text-brown-900">{p.name}</h2>
               <p className="mt-1 text-sm text-muted">{p.gradeLabel} grade</p>
