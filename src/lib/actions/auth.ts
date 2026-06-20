@@ -100,21 +100,31 @@ export async function registerAction(_prev: ActionState, formData: FormData): Pr
     return { error: "Please fix the highlighted fields.", fieldErrors };
   }
   const d = parsed.data;
+  const admin = createSupabaseAdminClient();
 
-  const supabase = await createSupabaseServerClient();
-  const { data: signUp, error: signUpError } = await supabase.auth.signUp({
+  // Create the auth user via the service role, pre-confirmed. (This deployment
+  // has no transactional email configured, so we confirm immediately rather
+  // than leave accounts stuck waiting on a verification link.) The
+  // handle_new_user trigger creates the matching profiles row (role=customer).
+  const { data: created, error: createErr } = await admin.auth.admin.createUser({
     email: d.email,
     password: d.password,
-    options: { data: { full_name: d.fullName, phone: d.phone } },
+    email_confirm: true,
+    user_metadata: { full_name: d.fullName, phone: d.phone },
   });
-  if (signUpError) return { error: signUpError.message };
+  if (createErr) {
+    const exists = /already|registered|exists/i.test(createErr.message);
+    return {
+      error: exists
+        ? "An account with this email already exists. Try logging in instead."
+        : createErr.message,
+      ...(exists ? { fieldErrors: { email: "Email already in use" } } : {}),
+    };
+  }
+  const userId = created.user.id;
 
-  const userId = signUp.user?.id;
-  if (!userId) return { error: "Could not create your account. Please try again." };
-
-  // Service-role insert so the business is created reliably even before the
-  // email is confirmed / a session exists.
-  const admin = createSupabaseAdminClient();
+  // Insert the business (service role bypasses RLS). If this fails, roll back
+  // the orphaned auth user so the form can be safely resubmitted.
   const { error: bizError } = await admin.from("businesses").insert({
     owner_user_id: userId,
     business_name: d.businessName,
@@ -127,10 +137,19 @@ export async function registerAction(_prev: ActionState, formData: FormData): Pr
     city: d.city,
     status: "pending",
   });
-  if (bizError) return { error: bizError.message };
+  if (bizError) {
+    await admin.auth.admin.deleteUser(userId);
+    return { error: bizError.message };
+  }
 
-  if (signUp.session) redirect("/app");
-  redirect("/login?status=registered");
+  // Sign the new customer in and take them to the portal (pending review).
+  const supabase = await createSupabaseServerClient();
+  const { error: signInErr } = await supabase.auth.signInWithPassword({
+    email: d.email,
+    password: d.password,
+  });
+  if (signInErr) redirect("/login?status=registered");
+  redirect("/app");
 }
 
 export async function signOutAction() {
