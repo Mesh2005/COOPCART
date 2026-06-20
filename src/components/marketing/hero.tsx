@@ -7,7 +7,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { PixelTrail } from "@/components/ui/pixel-trail";
 import { useScreenSize } from "@/components/hooks/use-screen-size";
 import { cn } from "@/lib/utils";
-import { SketchfabEgg } from "./sketchfab-egg";
+import { EggTray } from "./egg-tray";
 
 const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
 
@@ -93,7 +93,7 @@ export function Hero() {
           transition={{ duration: 0.7, delay: 0.1, ease: EASE }}
           className="pointer-events-auto relative mx-auto w-full max-w-md"
         >
-          <SketchfabEgg />
+          <EggTray />
 
           <motion.div
             initial={{ opacity: 0, y: 10 }}
