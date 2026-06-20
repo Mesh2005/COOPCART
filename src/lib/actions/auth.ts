@@ -152,8 +152,9 @@ export async function registerAction(_prev: ActionState, formData: FormData): Pr
   redirect("/app");
 }
 
-export async function signOutAction() {
+export async function signOutAction(formData?: FormData) {
   const supabase = await createSupabaseServerClient();
   await supabase.auth.signOut();
-  redirect("/login");
+  const to = String(formData?.get("redirectTo") ?? "/login");
+  redirect(to.startsWith("/") ? to : "/login");
 }

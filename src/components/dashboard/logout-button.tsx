@@ -4,9 +4,16 @@ import { LogOut } from "lucide-react";
 import { signOutAction } from "@/lib/actions/auth";
 import { cn } from "@/lib/utils";
 
-export function LogoutButton({ className }: { className?: string }) {
+export function LogoutButton({
+  className,
+  redirectTo,
+}: {
+  className?: string;
+  redirectTo?: string;
+}) {
   return (
     <form action={signOutAction}>
+      {redirectTo && <input type="hidden" name="redirectTo" value={redirectTo} />}
       <button
         type="submit"
         className={cn(

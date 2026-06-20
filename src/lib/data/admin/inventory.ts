@@ -54,21 +54,36 @@ export async function getStockMovements(
   let q = supabase
     .from("stock_movements")
     .select(
-      `id, movement_type, trays_delta, note, created_at,
-       products!inner ( name ),
-       profiles ( full_name )`,
+      `id, movement_type, trays_delta, note, created_at, created_by,
+       products!inner ( name )`,
     )
     .order("created_at", { ascending: false })
     .limit(limit);
   if (productId) q = q.eq("product_id", productId);
   const { data } = await q;
-  return (data ?? []).map((m: any) => ({
+  const movements = data ?? [];
+
+  // stock_movements.created_by references auth.users, not profiles — resolve
+  // the names with a separate lookup rather than a (non-existent) embed.
+  const userIds = [
+    ...new Set(movements.map((m: any) => m.created_by).filter(Boolean)),
+  ];
+  const nameMap: Record<string, string | null> = {};
+  if (userIds.length > 0) {
+    const { data: profs } = await supabase
+      .from("profiles")
+      .select("id, full_name")
+      .in("id", userIds);
+    (profs ?? []).forEach((p: any) => (nameMap[p.id] = p.full_name));
+  }
+
+  return movements.map((m: any) => ({
     id: m.id,
     product_name: m.products.name,
     movement_type: m.movement_type,
     trays_delta: m.trays_delta,
     note: m.note,
     created_at: m.created_at,
-    created_by_name: m.profiles?.full_name ?? null,
+    created_by_name: m.created_by ? (nameMap[m.created_by] ?? null) : null,
   }));
 }

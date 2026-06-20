@@ -37,9 +37,7 @@ export async function updateSession(request: NextRequest) {
 
   const path = request.nextUrl.pathname;
   const isAppArea = path.startsWith("/app");
-  const isAdminLogin = path === "/admin/login";
-  const isAdminArea = path.startsWith("/admin") && !isAdminLogin;
-  const isCustomerAuthPage = path === "/login" || path === "/register";
+  const isAdminArea = path.startsWith("/admin") && path !== "/admin/login";
 
   // Unauthenticated → send to the matching login, preserving the target.
   if (!user) {
@@ -53,16 +51,12 @@ export async function updateSession(request: NextRequest) {
     return response;
   }
 
-  // Authenticated → keep users off the login screens.
-  if (isCustomerAuthPage) {
+  // Authenticated users may still open a login page to SWITCH accounts
+  // (each login page shows a "signed in as …" banner). Only bounce them off
+  // /register, since they already have an account.
+  if (path === "/register") {
     const redirectUrl = request.nextUrl.clone();
     redirectUrl.pathname = "/app";
-    redirectUrl.search = "";
-    return NextResponse.redirect(redirectUrl);
-  }
-  if (isAdminLogin) {
-    const redirectUrl = request.nextUrl.clone();
-    redirectUrl.pathname = "/admin";
     redirectUrl.search = "";
     return NextResponse.redirect(redirectUrl);
   }

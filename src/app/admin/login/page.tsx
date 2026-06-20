@@ -1,6 +1,9 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { Egg, Lock, ArrowLeft } from "lucide-react";
+import { getCurrentProfile } from "@/lib/auth";
+import { STAFF_ROLES } from "@/lib/types";
+import { SignedInNotice } from "@/components/auth/signed-in-notice";
 import { AdminLoginForm } from "./admin-login-form";
 
 export const metadata: Metadata = {
@@ -14,6 +17,9 @@ export default async function AdminLoginPage({
   searchParams: Promise<{ next?: string }>;
 }) {
   const { next } = await searchParams;
+  const profile = await getCurrentProfile();
+  const isStaff =
+    profile && (STAFF_ROLES as readonly string[]).includes(profile.role);
 
   return (
     <div className="relative flex min-h-dvh items-center justify-center overflow-hidden bg-brown-900 px-5 py-12">
@@ -35,6 +41,15 @@ export default async function AdminLoginPage({
         </div>
 
         <div className="rounded-3xl border border-white/10 bg-cream p-7 shadow-[0_30px_70px_-30px_rgba(0,0,0,0.6)] sm:p-8">
+          {profile && (
+            <SignedInNotice
+              email={profile.email}
+              role={profile.role}
+              dashboardHref={isStaff ? "/admin" : "/app"}
+              dashboardLabel={isStaff ? "Go to admin console" : "Go to your portal"}
+              switchTo="/admin/login"
+            />
+          )}
           <AdminLoginForm next={next} />
         </div>
 

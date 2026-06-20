@@ -27,16 +27,32 @@ export async function getCustomers(
   let q = supabase
     .from("businesses")
     .select(
-      `id, business_name, business_type, br_number, contact_person, phone, email,
-       city, status, cod_limit, notes, created_at, approved_at,
-       profiles!owner_user_id ( full_name, email )`,
+      `id, owner_user_id, business_name, business_type, br_number, contact_person,
+       phone, email, city, status, cod_limit, notes, created_at, approved_at`,
     )
     .order("created_at", { ascending: false });
   if (status) q = q.eq("status", status);
   const { data } = await q;
+  const businesses = data ?? [];
 
-  const ids = (data ?? []).map((b: any) => b.id);
-  let orderCounts: Record<string, number> = {};
+  // businesses.owner_user_id references auth.users, not profiles, so there is
+  // no PostgREST relationship to embed — fetch the owner profiles separately.
+  const ownerIds = [
+    ...new Set(businesses.map((b: any) => b.owner_user_id).filter(Boolean)),
+  ];
+  const profileMap: Record<string, { full_name: string | null; email: string | null }> = {};
+  if (ownerIds.length > 0) {
+    const { data: profs } = await supabase
+      .from("profiles")
+      .select("id, full_name, email")
+      .in("id", ownerIds);
+    (profs ?? []).forEach((p: any) => {
+      profileMap[p.id] = { full_name: p.full_name, email: p.email };
+    });
+  }
+
+  const ids = businesses.map((b: any) => b.id);
+  const orderCounts: Record<string, number> = {};
   if (ids.length > 0) {
     const { data: counts } = await supabase
       .from("orders")
@@ -47,7 +63,7 @@ export async function getCustomers(
     });
   }
 
-  return (data ?? []).map((b: any) => ({
+  return businesses.map((b: any) => ({
     id: b.id,
     business_name: b.business_name,
     business_type: b.business_type,
@@ -61,20 +77,26 @@ export async function getCustomers(
     notes: b.notes,
     created_at: b.created_at,
     approved_at: b.approved_at,
-    owner_email: b.profiles?.email ?? null,
-    owner_name: b.profiles?.full_name ?? null,
+    owner_email: profileMap[b.owner_user_id]?.email ?? b.email ?? null,
+    owner_name: profileMap[b.owner_user_id]?.full_name ?? b.contact_person ?? null,
     order_count: orderCounts[b.id] ?? 0,
   }));
 }
 
 export async function getCustomerById(id: string) {
   const supabase = await createSupabaseServerClient();
-  const { data } = await supabase
+  const { data: business } = await supabase
     .from("businesses")
-    .select(
-      `*, profiles!owner_user_id ( full_name, email, phone, role, created_at )`,
-    )
+    .select("*")
     .eq("id", id)
     .single();
-  return data ?? null;
+  if (!business) return null;
+
+  const { data: owner } = await supabase
+    .from("profiles")
+    .select("full_name, email, phone, role, created_at")
+    .eq("id", business.owner_user_id)
+    .maybeSingle();
+
+  return { ...business, owner };
 }

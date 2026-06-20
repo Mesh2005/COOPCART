@@ -31,7 +31,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             <p className="text-sm font-semibold text-brown-900">{profile.full_name ?? "Staff"}</p>
             <p className="text-xs capitalize text-muted">{profile.role}</p>
           </div>
-          <LogoutButton />
+          <LogoutButton redirectTo="/admin/login" />
         </header>
 
         <div className="border-b border-line bg-surface/40 px-3 py-2 lg:hidden">
