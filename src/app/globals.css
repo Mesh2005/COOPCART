@@ -231,6 +231,36 @@
   animation: float 4.5s var(--ease-soft) infinite;
 }
 
+/* Spotlight sweep (used by the Spline hero) */
+@keyframes spotlight {
+  0% {
+    opacity: 0;
+    transform: translate(-72%, -62%) scale(0.5);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -40%) scale(1);
+  }
+}
+.animate-spotlight {
+  animation: spotlight 2s var(--ease-soft) 0.6s 1 forwards;
+}
+
+/* Loading spinner for the lazy-loaded 3D scene */
+.loader {
+  width: 42px;
+  height: 42px;
+  border-radius: 9999px;
+  border: 3px solid color-mix(in srgb, var(--color-yolk-400) 35%, transparent);
+  border-top-color: var(--color-yolk-400);
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   ::before,

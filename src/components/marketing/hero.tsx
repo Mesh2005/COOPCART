@@ -4,10 +4,10 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight, BadgeCheck, Egg, Truck, Wallet } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
-import { PixelTrail } from "@/components/ui/pixel-trail";
-import { useScreenSize } from "@/components/hooks/use-screen-size";
+import { Card } from "@/components/ui/card";
+import { Spotlight } from "@/components/ui/spotlight";
+import { SplineScene } from "@/components/ui/splite";
 import { cn } from "@/lib/utils";
-import { EggTray } from "./egg-tray";
 
 const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
 
@@ -18,104 +18,79 @@ const fadeUp = (delay = 0) => ({
 });
 
 export function Hero() {
-  const screenSize = useScreenSize();
-
   return (
-    <section className="relative overflow-hidden">
-      <div className="glow-warm pointer-events-none absolute inset-x-0 top-0 h-[420px]" />
-      <div className="bg-grain pointer-events-none absolute inset-0 opacity-70" />
+    <section className="px-4 py-8 sm:px-6 sm:py-10">
+      <Card className="relative mx-auto w-full max-w-7xl overflow-hidden rounded-3xl border-brown-800 bg-brown-900 md:h-[560px]">
+        {/* warm spotlight sweep */}
+        <Spotlight className="-top-40 left-0 md:-top-20 md:left-60" fill="#f2b441" />
+        <div className="bg-grain pointer-events-none absolute inset-0 opacity-[0.08]" />
 
-      {/* Interactive pixel-trail background — fades dots in the cursor's wake */}
-      <PixelTrail
-        pixelSize={screenSize.lessThan("md") ? 44 : 64}
-        fadeDuration={600}
-        delay={0}
-        className="z-0"
-        pixelClassName="rounded-full bg-yolk-300/55"
-      />
-
-      <div className="pointer-events-none relative z-10 mx-auto grid w-full max-w-7xl items-center gap-12 px-5 py-20 sm:px-8 lg:grid-cols-2 lg:py-28">
-        <div>
-          <motion.div
-            {...fadeUp(0)}
-            className="inline-flex items-center gap-2 rounded-full border border-brown-200 bg-surface/70 px-3 py-1 text-xs font-medium text-brown-700 backdrop-blur"
-          >
-            <Egg className="h-3.5 w-3.5 text-yolk-500" /> Wholesale eggs · Abeyrathna Farms
-          </motion.div>
-
-          <motion.h1
-            {...fadeUp(0.05)}
-            className="mt-5 text-balance text-4xl leading-[1.05] text-brown-900 sm:text-5xl lg:text-6xl"
-          >
-            Farm-fresh eggs, <span className="text-brown-500">wholesale</span> — ordered in
-            minutes, not phone calls.
-          </motion.h1>
-
-          <motion.p
-            {...fadeUp(0.12)}
-            className="mt-5 max-w-xl text-pretty text-lg text-muted"
-          >
-            CoopCart brings Abeyrathna Farms’ egg supply online. Graded by size, priced by the
-            tray, and delivered on a schedule your shop, bakery, or kitchen can count on.
-          </motion.p>
-
-          <motion.div {...fadeUp(0.18)} className="pointer-events-auto mt-8 flex flex-wrap items-center gap-3">
-            <Link href="/register" className={cn(buttonVariants({ size: "lg" }))}>
-              Register your business <ArrowRight className="h-4 w-4" />
-            </Link>
-            <Link
-              href="/products"
-              className={cn(buttonVariants({ variant: "secondary", size: "lg" }))}
+        <div className="flex h-full flex-col md:flex-row">
+          {/* Left content */}
+          <div className="relative z-10 flex flex-1 flex-col justify-center p-8 sm:p-12">
+            <motion.div
+              {...fadeUp(0)}
+              className="inline-flex w-fit items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-medium text-brown-100 backdrop-blur"
             >
-              Browse the catalog
-            </Link>
-          </motion.div>
+              <Egg className="h-3.5 w-3.5 text-yolk-400" /> Wholesale eggs · Abeyrathna Farms
+            </motion.div>
 
-          <motion.ul
-            {...fadeUp(0.24)}
-            className="mt-10 flex flex-wrap gap-x-8 gap-y-3 text-sm font-medium text-brown-700"
-          >
-            <li className="flex items-center gap-2">
-              <BadgeCheck className="h-4 w-4 text-sage-500" /> 3 graded sizes
-            </li>
-            <li className="flex items-center gap-2">
-              <Truck className="h-4 w-4 text-sage-500" /> 4 delivery days a week
-            </li>
-            <li className="flex items-center gap-2">
-              <Wallet className="h-4 w-4 text-sage-500" /> Bank transfer or COD
-            </li>
-          </motion.ul>
+            <motion.h1
+              {...fadeUp(0.05)}
+              className="mt-5 bg-gradient-to-b from-cream to-brown-300 bg-clip-text font-display text-4xl font-semibold leading-[1.05] tracking-tight text-transparent text-balance sm:text-5xl lg:text-6xl"
+            >
+              Farm-fresh eggs, wholesale — ordered in minutes.
+            </motion.h1>
+
+            <motion.p
+              {...fadeUp(0.12)}
+              className="mt-5 max-w-lg text-pretty text-base text-brown-100/75 sm:text-lg"
+            >
+              CoopCart brings Abeyrathna Farms’ egg supply online. Graded by size,
+              priced by the tray, and delivered on a schedule your shop, bakery, or
+              kitchen can count on.
+            </motion.p>
+
+            <motion.div {...fadeUp(0.18)} className="mt-8 flex flex-wrap items-center gap-3">
+              <Link href="/register" className={cn(buttonVariants({ variant: "accent", size: "lg" }))}>
+                Register your business <ArrowRight className="h-4 w-4" />
+              </Link>
+              <Link
+                href="/products"
+                className={cn(
+                  buttonVariants({ variant: "outline", size: "lg" }),
+                  "border-white/25 bg-transparent text-cream hover:bg-white/10",
+                )}
+              >
+                Browse the catalogue
+              </Link>
+            </motion.div>
+
+            <motion.ul
+              {...fadeUp(0.24)}
+              className="mt-10 flex flex-wrap gap-x-8 gap-y-3 text-sm font-medium text-brown-100/80"
+            >
+              <li className="flex items-center gap-2">
+                <BadgeCheck className="h-4 w-4 text-yolk-400" /> 3 graded sizes
+              </li>
+              <li className="flex items-center gap-2">
+                <Truck className="h-4 w-4 text-yolk-400" /> 4 delivery days a week
+              </li>
+              <li className="flex items-center gap-2">
+                <Wallet className="h-4 w-4 text-yolk-400" /> Bank transfer or COD
+              </li>
+            </motion.ul>
+          </div>
+
+          {/* Right content — interactive 3D scene */}
+          <div className="relative min-h-[320px] flex-1 md:min-h-0">
+            <SplineScene
+              scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
+              className="h-full w-full"
+            />
+          </div>
         </div>
-
-        <motion.div
-          initial={{ opacity: 0, scale: 0.92, y: 20 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.1, ease: EASE }}
-          className="pointer-events-auto relative mx-auto w-full max-w-md"
-        >
-          <EggTray />
-
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.5, ease: EASE }}
-            className="absolute -left-4 top-6 rounded-2xl border border-line bg-surface/90 px-4 py-2.5 shadow-lg backdrop-blur"
-          >
-            <p className="text-[11px] font-medium text-muted">Grade</p>
-            <p className="text-sm font-semibold text-brown-900">Brown · Large</p>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.65, ease: EASE }}
-            className="absolute -bottom-4 right-2 rounded-2xl border border-line bg-surface/90 px-4 py-2.5 shadow-lg backdrop-blur"
-          >
-            <p className="text-[11px] font-medium text-muted">Sold by</p>
-            <p className="text-sm font-semibold text-brown-900">Tray of 30</p>
-          </motion.div>
-        </motion.div>
-      </div>
+      </Card>
     </section>
   );
 }
