@@ -19,8 +19,8 @@ const fadeUp = (delay = 0) => ({
 
 export function Hero() {
   return (
-    <section className="px-4 py-8 sm:px-6 sm:py-10">
-      <Card className="relative mx-auto w-full max-w-7xl overflow-hidden rounded-3xl border-brown-800 bg-brown-900 md:h-[560px]">
+    <section className="p-4 sm:p-6">
+      <Card className="relative mx-auto h-[calc(100dvh-2rem)] min-h-[34rem] w-full max-w-7xl overflow-hidden rounded-3xl border-brown-800 bg-brown-900 sm:h-[calc(100dvh-3rem)]">
         {/* warm spotlight sweep */}
         <Spotlight className="-top-40 left-0 md:-top-20 md:left-60" fill="#f2b441" />
         <div className="bg-grain pointer-events-none absolute inset-0 opacity-[0.08]" />
