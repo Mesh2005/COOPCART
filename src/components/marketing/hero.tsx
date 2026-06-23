@@ -4,8 +4,10 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight, BadgeCheck, Egg, Truck, Wallet } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
-import { SplineScene } from "@/components/ui/splite";
+import { PixelTrail } from "@/components/ui/pixel-trail";
+import { useScreenSize } from "@/components/hooks/use-screen-size";
 import { cn } from "@/lib/utils";
+import { EggTray } from "./egg-tray";
 
 const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
 
@@ -16,13 +18,24 @@ const fadeUp = (delay = 0) => ({
 });
 
 export function Hero() {
+  const screenSize = useScreenSize();
+
   return (
     <section className="relative overflow-hidden">
-      <div className="glow-warm pointer-events-none absolute inset-x-0 top-0 h-[520px]" />
+      <div className="glow-warm pointer-events-none absolute inset-x-0 top-0 h-[420px]" />
       <div className="bg-grain pointer-events-none absolute inset-0 opacity-70" />
 
-      <div className="relative mx-auto grid min-h-dvh w-full max-w-7xl items-center gap-6 px-5 sm:px-8 lg:grid-cols-2">
-        <div className="py-14 lg:py-0">
+      {/* Interactive pixel-trail background — fades dots in the cursor's wake */}
+      <PixelTrail
+        pixelSize={screenSize.lessThan("md") ? 44 : 64}
+        fadeDuration={600}
+        delay={0}
+        className="z-0"
+        pixelClassName="rounded-full bg-yolk-300/55"
+      />
+
+      <div className="pointer-events-none relative z-10 mx-auto grid w-full max-w-7xl items-center gap-12 px-5 py-20 sm:px-8 lg:grid-cols-2 lg:py-28">
+        <div>
           <motion.div
             {...fadeUp(0)}
             className="inline-flex items-center gap-2 rounded-full border border-brown-200 bg-surface/70 px-3 py-1 text-xs font-medium text-brown-700 backdrop-blur"
@@ -34,19 +47,19 @@ export function Hero() {
             {...fadeUp(0.05)}
             className="mt-5 text-balance text-4xl leading-[1.05] text-brown-900 sm:text-5xl lg:text-6xl"
           >
-            Farm-fresh eggs, <span className="text-brown-500">wholesale</span> — ordered in minutes.
+            Farm-fresh eggs, <span className="text-brown-500">wholesale</span> — ordered in
+            minutes, not phone calls.
           </motion.h1>
 
           <motion.p
             {...fadeUp(0.12)}
             className="mt-5 max-w-xl text-pretty text-lg text-muted"
           >
-            CoopCart brings Abeyrathna Farms’ egg supply online. Graded by size,
-            priced by the tray, and delivered on a schedule your shop, bakery, or
-            kitchen can count on.
+            CoopCart brings Abeyrathna Farms’ egg supply online. Graded by size, priced by the
+            tray, and delivered on a schedule your shop, bakery, or kitchen can count on.
           </motion.p>
 
-          <motion.div {...fadeUp(0.18)} className="mt-8 flex flex-wrap items-center gap-3">
+          <motion.div {...fadeUp(0.18)} className="pointer-events-auto mt-8 flex flex-wrap items-center gap-3">
             <Link href="/register" className={cn(buttonVariants({ size: "lg" }))}>
               Register your business <ArrowRight className="h-4 w-4" />
             </Link>
@@ -54,7 +67,7 @@ export function Hero() {
               href="/products"
               className={cn(buttonVariants({ variant: "secondary", size: "lg" }))}
             >
-              Browse the catalogue
+              Browse the catalog
             </Link>
           </motion.div>
 
@@ -74,13 +87,34 @@ export function Hero() {
           </motion.ul>
         </div>
 
-        {/* interactive 3D scene */}
-        <div className="relative h-[340px] w-full sm:h-[420px] lg:h-dvh">
-          <SplineScene
-            scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
-            className="h-full w-full"
-          />
-        </div>
+        <motion.div
+          initial={{ opacity: 0, scale: 0.92, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.1, ease: EASE }}
+          className="pointer-events-auto relative mx-auto w-full max-w-md"
+        >
+          <EggTray />
+
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.5, ease: EASE }}
+            className="absolute -left-4 top-6 rounded-2xl border border-line bg-surface/90 px-4 py-2.5 shadow-lg backdrop-blur"
+          >
+            <p className="text-[11px] font-medium text-muted">Grade</p>
+            <p className="text-sm font-semibold text-brown-900">Brown · Large</p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.65, ease: EASE }}
+            className="absolute -bottom-4 right-2 rounded-2xl border border-line bg-surface/90 px-4 py-2.5 shadow-lg backdrop-blur"
+          >
+            <p className="text-[11px] font-medium text-muted">Sold by</p>
+            <p className="text-sm font-semibold text-brown-900">Tray of 30</p>
+          </motion.div>
+        </motion.div>
       </div>
     </section>
   );
