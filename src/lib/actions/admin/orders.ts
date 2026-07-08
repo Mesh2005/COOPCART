@@ -15,9 +15,9 @@ export async function setOrderStatusAction(
 
   const supabase = await createSupabaseServerClient();
   const { error } = await supabase.rpc("set_order_status", {
-    order_id: orderId,
-    new_status: newStatus,
-    note,
+    p_order_id: orderId,
+    p_new: newStatus,
+    p_note: note,
   });
 
   if (error) return { error: error.message };
@@ -50,8 +50,8 @@ export async function assignDeliveryAction(
   const userId = formData.get("userId") as string;
   const supabase = await createSupabaseServerClient();
   const { error } = await supabase.rpc("assign_delivery", {
-    order_id: orderId,
-    user_id: userId,
+    p_order_id: orderId,
+    p_user: userId,
   });
   if (error) return { error: error.message };
   revalidatePath(`/admin/orders/${orderId}`);

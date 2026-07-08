@@ -18,9 +18,9 @@ export async function verifyPaymentAction(
 
   const supabase = await createSupabaseServerClient();
   const { error } = await supabase.rpc("verify_payment", {
-    payment_id: paymentId,
-    approve,
-    reason,
+    p_payment_id: paymentId,
+    p_approve: approve,
+    p_reason: reason,
   });
 
   if (error) return { error: error.message };

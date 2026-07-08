@@ -17,9 +17,9 @@ export async function addProductionAction(
 
   const supabase = await createSupabaseServerClient();
   const { error } = await supabase.rpc("add_production", {
-    product_id: productId,
-    trays,
-    note,
+    p_product_id: productId,
+    p_trays: trays,
+    p_note: note,
   });
 
   if (error) return { error: error.message };
@@ -41,9 +41,9 @@ export async function adjustStockAction(
 
   const supabase = await createSupabaseServerClient();
   const { error } = await supabase.rpc("adjust_stock", {
-    product_id: productId,
-    delta,
-    note,
+    p_product_id: productId,
+    p_delta: delta,
+    p_note: note,
   });
 
   if (error) return { error: error.message };

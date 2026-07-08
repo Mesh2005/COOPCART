@@ -5,6 +5,8 @@ import { z } from "zod";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { BUSINESS_TYPES, STAFF_ROLES } from "@/lib/types";
+import { createOtp, verifyOtp } from "@/lib/otp";
+import { sendOtpEmail, hasEmailProvider } from "@/lib/email";
 import type { ActionState } from "./state";
 
 const loginSchema = z.object({
@@ -20,8 +22,20 @@ export async function loginAction(_prev: ActionState, formData: FormData): Promi
   if (!parsed.success) return { error: "Please enter a valid email and password." };
 
   const supabase = await createSupabaseServerClient();
-  const { error } = await supabase.auth.signInWithPassword(parsed.data);
-  if (error) return { error: error.message };
+  const { data: signIn, error } = await supabase.auth.signInWithPassword(parsed.data);
+  if (error) {
+    // Supabase reports unconfirmed emails here when confirmation is required.
+    if (/email not confirmed|not confirmed/i.test(error.message)) {
+      return { error: "Please verify your email before logging in." };
+    }
+    return { error: error.message };
+  }
+
+  // Only email-verified accounts may sign in.
+  if (signIn.user && !signIn.user.email_confirmed_at) {
+    await supabase.auth.signOut();
+    return { error: "Please verify your email before logging in." };
+  }
 
   // Customer login always lands in the customer portal. (Staff who sign in
   // here are bounced to /admin by the /app layout guard.) An explicit
@@ -78,8 +92,8 @@ const registerSchema = z.object({
   city: z.string().min(2, "Enter your city"),
 });
 
-export async function registerAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
-  const parsed = registerSchema.safeParse({
+function parseRegistration(formData: FormData) {
+  return registerSchema.safeParse({
     fullName: String(formData.get("fullName") ?? ""),
     email: String(formData.get("email") ?? ""),
     password: String(formData.get("password") ?? ""),
@@ -90,22 +104,100 @@ export async function registerAction(_prev: ActionState, formData: FormData): Pr
     addressLine1: String(formData.get("addressLine1") ?? ""),
     city: String(formData.get("city") ?? ""),
   });
+}
 
+function fieldErrorsFrom(issues: z.ZodIssue[]) {
+  const fieldErrors: Record<string, string> = {};
+  for (const issue of issues) {
+    const key = issue.path[0];
+    if (typeof key === "string" && !fieldErrors[key]) fieldErrors[key] = issue.message;
+  }
+  return fieldErrors;
+}
+
+/**
+ * Step 1 of registration: validate the business details, ensure the email is
+ * free, then email a 6-digit verification code. The account is NOT created
+ * yet — registerAction (step 2) does that once the code is confirmed.
+ */
+export async function requestSignupOtp(
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const parsed = parseRegistration(formData);
   if (!parsed.success) {
-    const fieldErrors: Record<string, string> = {};
-    for (const issue of parsed.error.issues) {
-      const key = issue.path[0];
-      if (typeof key === "string" && !fieldErrors[key]) fieldErrors[key] = issue.message;
-    }
-    return { error: "Please fix the highlighted fields.", fieldErrors };
+    return { error: "Please fix the highlighted fields.", fieldErrors: fieldErrorsFrom(parsed.error.issues) };
   }
   const d = parsed.data;
   const admin = createSupabaseAdminClient();
 
-  // Create the auth user via the service role, pre-confirmed. (This deployment
-  // has no transactional email configured, so we confirm immediately rather
-  // than leave accounts stuck waiting on a verification link.) The
-  // handle_new_user trigger creates the matching profiles row (role=customer).
+  // Reject emails that already have an account.
+  const { data: existing } = await admin
+    .from("profiles")
+    .select("id")
+    .eq("email", d.email.toLowerCase())
+    .maybeSingle();
+  if (existing) {
+    return {
+      error: "An account with this email already exists. Try logging in instead.",
+      fieldErrors: { email: "Email already in use" },
+    };
+  }
+
+  const code = await createOtp(d.email);
+  const sent = await sendOtpEmail(d.email, code);
+
+  if (sent.delivered) {
+    return { otpSent: true, success: `We sent a 6-digit code to ${d.email}.` };
+  }
+  if (!hasEmailProvider) {
+    // No email service configured — surface the code so the flow is testable.
+    return {
+      otpSent: true,
+      devCode: code,
+      success: `Email isn't configured yet, so here's your code for testing: ${code}`,
+    };
+  }
+  return { error: sent.error ?? "Could not send the verification email. Please try again." };
+}
+
+/**
+ * Step 2 of registration: verify the emailed OTP, then create the auth user,
+ * the pending business, and sign the customer in.
+ */
+export async function registerAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
+  const parsed = parseRegistration(formData);
+  if (!parsed.success) {
+    return {
+      error: "Please fix the highlighted fields.",
+      fieldErrors: fieldErrorsFrom(parsed.error.issues),
+    };
+  }
+  const d = parsed.data;
+
+  // Verify the emailed code first.
+  const code = String(formData.get("code") ?? "").trim();
+  if (!/^\d{6}$/.test(code)) {
+    return { otpSent: true, error: "Enter the 6-digit code from your email." };
+  }
+  const check = await verifyOtp(d.email, code);
+  if (!check.ok) {
+    const msg =
+      check.reason === "mismatch"
+        ? "That code is incorrect. Please try again."
+        : check.reason === "expired"
+          ? "That code has expired. Request a new one."
+          : check.reason === "too_many"
+            ? "Too many attempts. Request a new code."
+            : "Please request a verification code first.";
+    return { otpSent: true, error: msg };
+  }
+
+  const admin = createSupabaseAdminClient();
+
+  // Create the auth user via the service role, pre-confirmed — the email was
+  // already verified by the OTP step above. The handle_new_user trigger
+  // creates the matching profiles row (role=customer).
   const { data: created, error: createErr } = await admin.auth.admin.createUser({
     email: d.email,
     password: d.password,
