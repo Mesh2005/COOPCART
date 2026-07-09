@@ -1,20 +1,10 @@
 import Link from "next/link";
 import { Wallet, ArrowRight } from "lucide-react";
 import { getMyOrders } from "@/lib/data/orders";
-import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
-import { PAYMENT_STATUS_LABELS } from "@/lib/labels";
+import { PaymentStatusPill } from "@/components/ui/status-pill";
 import { formatDate, formatLKR } from "@/lib/format";
 import { cn } from "@/lib/utils";
-import type { PaymentStatus } from "@/lib/types";
-
-const STATUS_VARIANT: Record<PaymentStatus, "brand" | "sage" | "accent" | "neutral"> = {
-  unpaid: "accent",
-  slip_uploaded: "brand",
-  verified: "sage",
-  rejected: "neutral",
-  paid_cod: "sage",
-};
 
 export default async function PaymentsPage() {
   const orders = await getMyOrders();
@@ -59,12 +49,12 @@ export default async function PaymentsPage() {
         </div>
       )}
 
-      <div className="space-y-3">
+      <div className="stagger space-y-3">
         {payable.map((o) => (
           <Link
             key={o.id}
             href={`/app/orders/${o.id}`}
-            className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-line bg-surface p-4 transition-shadow hover:shadow-sm"
+            className="card-hover flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-line bg-surface p-4"
           >
             <div className="min-w-0">
               <p className="font-semibold text-brown-900">{o.order_number}</p>
@@ -75,9 +65,7 @@ export default async function PaymentsPage() {
             </div>
             <div className="flex items-center gap-4">
               <span className="font-semibold text-brown-900">{formatLKR(o.total)}</span>
-              <Badge variant={STATUS_VARIANT[o.payment_status]}>
-                {PAYMENT_STATUS_LABELS[o.payment_status]}
-              </Badge>
+              <PaymentStatusPill status={o.payment_status} />
               <ArrowRight className="h-4 w-4 text-brown-400" />
             </div>
           </Link>

@@ -42,18 +42,29 @@ export default async function CatalogPage() {
         </Link>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+      <div className="stagger grid gap-6 md:grid-cols-2 xl:grid-cols-3">
         {products.map((p) => (
-          <div key={p.id} className="flex flex-col rounded-3xl border border-line bg-surface p-6">
+          <div
+            key={p.id}
+            className="card-hover flex flex-col overflow-hidden rounded-3xl border border-line bg-surface"
+          >
+            <div className="h-1.5 bg-gradient-to-r from-yolk-400 via-[#d9833f] to-sage-400" />
+            <div className="flex flex-1 flex-col p-6">
             <div className="flex items-start justify-between gap-2">
               <div>
                 <h2 className="text-lg text-brown-900">{p.name}</h2>
-                <p className="text-xs text-muted">
+                <p className="mt-0.5 text-xs text-muted">
                   {SIZE_GRADE_LABELS[p.size_grade]}
                   {p.weight_min_g != null ? ` · ${p.weight_min_g}–${p.weight_max_g} g` : ""}
                 </p>
               </div>
-              {p.low_stock && p.available > 0 && <Badge variant="accent">Low stock</Badge>}
+              {p.available <= 0 ? (
+                <Badge className="bg-red-100 text-red-700">Out of stock</Badge>
+              ) : p.low_stock ? (
+                <Badge variant="accent">Low stock</Badge>
+              ) : (
+                <Badge className="bg-green-100 text-green-700">In stock</Badge>
+              )}
             </div>
 
             <p className="mt-2 text-2xl font-semibold text-brown-900">
@@ -73,6 +84,7 @@ export default async function CatalogPage() {
                 basePrice={p.base_price}
                 initialQty={p.in_cart}
               />
+            </div>
             </div>
           </div>
         ))}

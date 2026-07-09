@@ -1,9 +1,8 @@
 import Link from "next/link";
 import { ClipboardList } from "lucide-react";
 import { getMyOrders } from "@/lib/data/orders";
-import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
-import { ORDER_STATUS_LABELS } from "@/lib/labels";
+import { OrderStatusPill } from "@/components/ui/status-pill";
 import { formatDate, formatLKR } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
@@ -26,12 +25,12 @@ export default async function OrdersPage() {
   return (
     <div className="space-y-6">
       <h1 className="text-2xl text-brown-900">Your orders</h1>
-      <div className="space-y-3">
+      <div className="stagger space-y-3">
         {orders.map((o) => (
           <Link
             key={o.id}
             href={`/app/orders/${o.id}`}
-            className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-line bg-surface p-4 transition-shadow hover:shadow-sm"
+            className="card-hover flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-line bg-surface p-4"
           >
             <div>
               <p className="font-semibold text-brown-900">{o.order_number}</p>
@@ -40,7 +39,7 @@ export default async function OrdersPage() {
               </p>
             </div>
             <div className="flex items-center gap-4">
-              <Badge>{ORDER_STATUS_LABELS[o.status]}</Badge>
+              <OrderStatusPill status={o.status} />
               <span className="font-semibold text-brown-900">{formatLKR(o.total)}</span>
             </div>
           </Link>

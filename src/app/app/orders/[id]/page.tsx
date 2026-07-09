@@ -6,8 +6,8 @@ import { getActiveBankAccounts } from "@/lib/data/settings";
 import { OrderTimeline } from "@/components/orders/order-timeline";
 import { SlipUpload } from "@/components/orders/slip-upload";
 import { Alert } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
-import { ORDER_STATUS_LABELS, PAYMENT_STATUS_LABELS } from "@/lib/labels";
+import { OrderStatusPill } from "@/components/ui/status-pill";
+import { PAYMENT_STATUS_LABELS } from "@/lib/labels";
 import { formatDate, formatLKR } from "@/lib/format";
 
 function Row({ k, v }: { k: string; v: string }) {
@@ -59,7 +59,7 @@ export default async function OrderDetailPage({
           <h1 className="text-2xl text-brown-900">{order.order_number}</h1>
           <p className="text-sm text-muted">Placed {formatDate(order.placed_at)}</p>
         </div>
-        <Badge variant="brand">{ORDER_STATUS_LABELS[order.status]}</Badge>
+        <OrderStatusPill status={order.status} />
       </div>
 
       <div className="grid gap-6 sm:grid-cols-2">
