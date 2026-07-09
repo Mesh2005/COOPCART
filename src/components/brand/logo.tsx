@@ -3,20 +3,10 @@
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 
-/**
- * CoopCart rooster brand mark (SVG fallback). Uses currentColor so the
- * placement controls the colour. This is shown when public/logo.png is
- * absent, and as the small mark in badges.
- */
-export function BrandMark({ className }: { className?: string }) {
+/** SVG rooster (fallback shown only if /logo-mark.png fails to load). */
+function BrandMarkSvg({ className }: { className?: string }) {
   return (
-    <svg
-      viewBox="0 0 48 48"
-      className={cn("h-6 w-6", className)}
-      role="img"
-      aria-label="CoopCart"
-      fill="none"
-    >
+    <svg viewBox="0 0 48 48" className={className} role="img" aria-label="CoopCart" fill="none">
       <g fill="currentColor">
         <path d="M15 31 C6 28 6 14 12 10 C12.5 18 17 21 21 22.5 C18 25.5 16.5 28 16.5 32 Z" />
         <path d="M14.5 30.5 C14.5 22.5 20.5 18 27.5 19.2 C33.5 20.2 36.5 25 34.5 31 C33 36 27.5 39 21.5 38 C16.8 37.2 14.5 34.2 14.5 30.5 Z" />
@@ -32,16 +22,29 @@ export function BrandMark({ className }: { className?: string }) {
         strokeLinecap="round"
         strokeLinejoin="round"
       />
-      <circle cx="37.5" cy="18" r="1.3" fill="var(--color-cream, #fff)" />
     </svg>
   );
 }
 
 /**
- * Full brand lockup. Renders the official artwork from /logo.png when it
- * exists; otherwise falls back to the rooster mark + "CoopCart" wordmark.
- * Drop the official logo at public/logo.png and it appears everywhere.
+ * The official CoopCart rooster mark (public/logo-mark.png), with the SVG
+ * rooster as a graceful fallback.
  */
+export function BrandMark({ className }: { className?: string }) {
+  const [failed, setFailed] = useState(false);
+  if (failed) return <BrandMarkSvg className={cn("h-8 w-8 text-[#d9833f]", className)} />;
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src="/logo-mark.png"
+      alt="CoopCart"
+      onError={() => setFailed(true)}
+      className={cn("h-8 w-auto object-contain", className)}
+    />
+  );
+}
+
+/** Full lockup: rooster mark + "CoopCart" wordmark (+ optional tagline). */
 export function Logo({
   className,
   markClassName,
@@ -53,30 +56,9 @@ export function Logo({
   tagline?: string | null;
   compact?: boolean;
 }) {
-  const [imgFailed, setImgFailed] = useState(false);
-
-  if (!imgFailed) {
-    return (
-      <span className={cn("flex items-center gap-2.5", className)}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="/logo.png"
-          alt="CoopCart — Abeyrathna Farms"
-          onError={() => setImgFailed(true)}
-          className={cn("w-auto object-contain", compact ? "h-8" : "h-10")}
-        />
-        {tagline && (
-          <span className="hidden text-[11px] tracking-wide opacity-70 sm:block">
-            {tagline}
-          </span>
-        )}
-      </span>
-    );
-  }
-
   return (
     <span className={cn("flex items-center gap-2.5", className)}>
-      <BrandMark className={cn("h-8 w-8 text-[#d9833f]", markClassName)} />
+      <BrandMark className={cn(compact ? "h-7" : "h-9", markClassName)} />
       <span className="leading-none">
         <span
           className={cn(
