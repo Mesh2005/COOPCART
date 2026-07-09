@@ -8,6 +8,7 @@ import {
   useTransform,
   useReducedMotion,
 } from "framer-motion";
+import { MapPin } from "lucide-react";
 import { CountUp } from "@/components/ui/count-up";
 import { BrandMark } from "@/components/brand/logo";
 import { cn } from "@/lib/utils";
@@ -15,6 +16,7 @@ import { cn } from "@/lib/utils";
 const EASE = [0.22, 1, 0.36, 1] as const;
 const bars = [46, 62, 54, 78, 60, 96, 71];
 const days = ["M", "T", "W", "T", "F", "S", "S"];
+const zones = ["Negombo", "Katunayake", "Seeduwa", "Ja-Ela", "Wattala", "Colombo suburbs"];
 const segments = [
   { label: "Delivered", count: 18, pct: 75, bar: "bg-green-500", dot: "bg-green-500" },
   { label: "In transit", count: 4, pct: 17, bar: "bg-orange-400", dot: "bg-orange-400" },
@@ -108,6 +110,24 @@ export function HeroDashboard({ className }: { className?: string }) {
                 <span className="text-[10px] text-muted">{days[i]}</span>
               </div>
             ))}
+          </div>
+
+          <div className="mt-3.5">
+            <div className="mb-1.5 flex items-center gap-1 text-[11px] text-muted">
+              <MapPin className="h-3 w-3 text-[#d9833f]" /> Delivery zones
+            </div>
+            <div className="relative overflow-hidden [mask-image:linear-gradient(90deg,transparent,#000_10%,#000_90%,transparent)]">
+              <div className="flex w-max animate-marquee gap-2">
+                {[...zones, ...zones].map((z, i) => (
+                  <span
+                    key={i}
+                    className="inline-flex flex-shrink-0 items-center gap-1 rounded-full bg-brown-50 px-2.5 py-1 text-[11px] font-medium text-brown-700"
+                  >
+                    <MapPin className="h-3 w-3 text-[#d9833f]" /> {z}
+                  </span>
+                ))}
+              </div>
+            </div>
           </div>
 
           <div className="mt-4 border-t border-line pt-3">

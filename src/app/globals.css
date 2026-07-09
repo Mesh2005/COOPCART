@@ -324,6 +324,19 @@
   animation: gradient-shift 9s ease infinite;
 }
 
+/* Seamless auto-sliding marquee (duplicate the content, slide -50%) */
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+.animate-marquee {
+  animation: marquee 18s linear infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   ::before,
