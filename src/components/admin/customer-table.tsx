@@ -7,7 +7,6 @@ import {
   suspendBusinessAction,
 } from "@/lib/actions/admin/customers";
 import { initialActionState } from "@/lib/actions/state";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { BUSINESS_TYPE_LABELS } from "@/lib/labels";
 import { formatDate } from "@/lib/format";
@@ -15,11 +14,11 @@ import { cn } from "@/lib/utils";
 import type { AdminCustomerRow } from "@/lib/data/admin/customers";
 import type { AccountStatus } from "@/lib/types";
 
-const STATUS_BADGE: Record<AccountStatus, "neutral" | "sage" | "accent" | "brand"> = {
-  pending: "accent",
-  approved: "sage",
-  rejected: "neutral",
-  suspended: "neutral",
+const STATUS_STYLE: Record<AccountStatus, string> = {
+  pending: "bg-amber-100 text-amber-700",
+  approved: "bg-green-100 text-green-700",
+  rejected: "bg-red-100 text-red-700",
+  suspended: "bg-gray-200 text-gray-600",
 };
 
 function ActionButtons({ customer }: { customer: AdminCustomerRow }) {
@@ -100,9 +99,14 @@ export function CustomerTable({
                 <p className="text-xs">{c.phone}</p>
               </td>
               <td className="px-4 py-3">
-                <Badge variant={STATUS_BADGE[c.status]} className="capitalize">
+                <span
+                  className={cn(
+                    "inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold capitalize",
+                    STATUS_STYLE[c.status],
+                  )}
+                >
                   {c.status}
-                </Badge>
+                </span>
               </td>
               <td className="px-4 py-3 text-muted">{c.order_count}</td>
               <td className="px-4 py-3 text-muted text-xs">

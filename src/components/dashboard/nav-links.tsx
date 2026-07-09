@@ -19,8 +19,9 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { SupportBadge } from "@/components/admin/support-badge";
 
-type NavItem = { href: string; label: string; icon: LucideIcon };
+type NavItem = { href: string; label: string; icon: LucideIcon; badge?: "support" };
 
 /**
  * Nav configuration lives inside this client component so the icon
@@ -38,7 +39,7 @@ const NAVS: Record<"admin" | "app", { base: string; items: NavItem[] }> = {
       { href: "/admin/products", label: "Products", icon: ShoppingBasket },
       { href: "/admin/inventory", label: "Inventory", icon: Boxes },
       { href: "/admin/customers", label: "Customers", icon: Users },
-      { href: "/admin/chat", label: "Live support", icon: MessagesSquare },
+      { href: "/admin/chat", label: "Live support", icon: MessagesSquare, badge: "support" },
       { href: "/admin/delivery", label: "Delivery", icon: Truck },
       { href: "/admin/reports", label: "Reports", icon: BarChart3 },
       { href: "/admin/staff", label: "Staff", icon: UserCog },
@@ -98,6 +99,7 @@ export function NavLinks({
           >
             <item.icon className="h-[18px] w-[18px] flex-shrink-0" />
             <span>{item.label}</span>
+            {item.badge === "support" && <SupportBadge />}
           </Link>
         );
       })}
