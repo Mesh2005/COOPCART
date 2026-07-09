@@ -14,16 +14,18 @@ import {
 import { requireStaff } from "@/lib/auth";
 import { getCustomers } from "@/lib/data/admin/customers";
 import { getAllPayments } from "@/lib/data/admin/payments";
+import { AuroraBackground } from "@/components/ui/aurora-background";
+import { cn } from "@/lib/utils";
 
 const modules = [
-  { href: "/admin/orders", label: "Orders", desc: "Kanban board, status flow, fulfilment.", icon: ClipboardList },
-  { href: "/admin/payments", label: "Payments", desc: "Verify bank slips, record COD.", icon: Wallet },
-  { href: "/admin/products", label: "Products & pricing", desc: "Grades, prices, bulk tiers.", icon: Egg },
-  { href: "/admin/inventory", label: "Inventory", desc: "Daily production, stock levels.", icon: Boxes },
-  { href: "/admin/customers", label: "Customers", desc: "Approvals, accounts, history.", icon: Users },
-  { href: "/admin/delivery", label: "Delivery", desc: "Zones, fees, days, assignments.", icon: Truck },
-  { href: "/admin/reports", label: "Reports", desc: "Sales, payments, fulfilment.", icon: BarChart3 },
-  { href: "/admin/staff", label: "Staff & roles", desc: "Manage team access.", icon: UserCog },
+  { href: "/admin/orders", label: "Orders", desc: "Kanban board, status flow, fulfilment.", icon: ClipboardList, color: "bg-blue-100 text-blue-600" },
+  { href: "/admin/payments", label: "Payments", desc: "Verify bank slips, record COD.", icon: Wallet, color: "bg-sage-200 text-sage-600" },
+  { href: "/admin/products", label: "Products & pricing", desc: "Grades, prices, bulk tiers.", icon: Egg, color: "bg-yolk-200 text-yolk-500" },
+  { href: "/admin/inventory", label: "Inventory", desc: "Daily production, stock levels.", icon: Boxes, color: "bg-purple-100 text-purple-600" },
+  { href: "/admin/customers", label: "Customers", desc: "Approvals, accounts, history.", icon: Users, color: "bg-[#d9833f]/15 text-[#d9833f]" },
+  { href: "/admin/delivery", label: "Delivery", desc: "Zones, fees, days, assignments.", icon: Truck, color: "bg-brown-100 text-brown-600" },
+  { href: "/admin/reports", label: "Reports", desc: "Sales, payments, fulfilment.", icon: BarChart3, color: "bg-teal-100 text-teal-600" },
+  { href: "/admin/staff", label: "Staff & roles", desc: "Manage team access.", icon: UserCog, color: "bg-rose-100 text-rose-600" },
 ];
 
 export default async function AdminOverview() {
@@ -37,11 +39,14 @@ export default async function AdminOverview() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl text-brown-900">Admin overview</h1>
-        <p className="mt-1 text-sm text-muted">
-          Welcome{firstName ? `, ${firstName}` : ""}. Manage the CoopCart wholesale operation from here.
-        </p>
+      <div className="animate-scale-in relative overflow-hidden rounded-3xl bg-gradient-to-br from-brown-700 via-brown-800 to-brown-900 p-6 text-cream shadow-lg sm:p-8">
+        <AuroraBackground variant="dark" className="opacity-70" />
+        <div className="relative">
+          <h1 className="font-display text-2xl font-semibold sm:text-3xl">Admin overview</h1>
+          <p className="mt-1 text-sm text-cream/80">
+            Welcome{firstName ? `, ${firstName}` : ""}. Manage the CoopCart wholesale operation from here.
+          </p>
+        </div>
       </div>
 
       {(pendingCustomers.length > 0 || pendingSlips.length > 0) && (
@@ -94,8 +99,8 @@ export default async function AdminOverview() {
             href={m.href}
             className="card-hover group rounded-2xl border border-line bg-surface p-5"
           >
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-brown-50 text-brown-500 transition-colors duration-300 group-hover:bg-yolk-200 group-hover:text-brown-700">
-              <m.icon className="h-5 w-5 transition-transform duration-300 group-hover:scale-110" />
+            <div className={cn("flex h-11 w-11 items-center justify-center rounded-xl transition-transform duration-300 group-hover:scale-110", m.color)}>
+              <m.icon className="h-5 w-5" />
             </div>
             <p className="mt-4 font-semibold text-brown-900">{m.label}</p>
             <p className="mt-1 text-sm text-muted">{m.desc}</p>

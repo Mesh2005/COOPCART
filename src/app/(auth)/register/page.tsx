@@ -7,7 +7,7 @@ export const metadata: Metadata = { title: "Register your business" };
 export default function RegisterPage() {
   return (
     <div>
-      <h1 className="text-2xl text-brown-900">Register your business</h1>
+      <h1 className="text-gradient-brand text-2xl font-semibold">Register your business</h1>
       <p className="mt-1 text-sm text-muted">
         Create an account. We’ll review it and unlock wholesale pricing for you.
       </p>

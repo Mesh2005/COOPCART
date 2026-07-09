@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowRight, CheckCircle2, Clock, ShieldAlert, ShoppingBasket } from "lucide-react";
 import { getMyBusiness, requireProfile } from "@/lib/auth";
 import { buttonVariants } from "@/components/ui/button";
+import { AuroraBackground } from "@/components/ui/aurora-background";
 import { cn } from "@/lib/utils";
 
 export default async function CustomerDashboard() {
@@ -12,9 +13,14 @@ export default async function CustomerDashboard() {
 
   return (
     <div className="mx-auto max-w-5xl space-y-6">
-      <div>
-        <h1 className="text-2xl text-brown-900">Welcome{firstName ? `, ${firstName}` : ""}</h1>
-        <p className="mt-1 text-sm text-muted">Here’s your wholesale account at a glance.</p>
+      <div className="animate-scale-in relative overflow-hidden rounded-3xl bg-gradient-to-br from-brown-600 via-brown-700 to-brown-900 p-6 text-cream shadow-lg sm:p-8">
+        <AuroraBackground variant="dark" className="opacity-70" />
+        <div className="relative">
+          <h1 className="font-display text-2xl font-semibold sm:text-3xl">
+            Welcome{firstName ? `, ${firstName}` : ""}
+          </h1>
+          <p className="mt-1 text-sm text-cream/80">Here’s your wholesale account at a glance.</p>
+        </div>
       </div>
 
       {status === "approved" ? (

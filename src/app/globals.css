@@ -261,6 +261,69 @@
   }
 }
 
+/* Slow-drifting colour blobs for animated "aurora" backgrounds */
+@keyframes blob {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(24px, -34px) scale(1.12);
+  }
+  66% {
+    transform: translate(-22px, 26px) scale(0.92);
+  }
+}
+.animate-blob {
+  animation: blob 16s var(--ease-soft) infinite;
+}
+
+/* Panning gradient text for headings */
+@keyframes gradient-pan {
+  to {
+    background-position: 200% center;
+  }
+}
+.text-gradient-brand {
+  background-image: linear-gradient(
+    90deg,
+    var(--color-brown-700),
+    var(--color-yolk-500),
+    var(--color-brown-600),
+    var(--color-yolk-500),
+    var(--color-brown-700)
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: gradient-pan 6s linear infinite;
+}
+
+/* Frosted glass surface */
+.glass {
+  background: color-mix(in srgb, var(--color-surface) 72%, transparent);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+/* Animated gradient border/background (for accent banners) */
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+.bg-animated-gradient {
+  background-size: 200% 200%;
+  animation: gradient-shift 9s ease infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   ::before,

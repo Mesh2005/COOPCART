@@ -19,7 +19,7 @@ export default async function LoginPage({
 
   return (
     <div>
-      <h1 className="text-2xl text-brown-900">Welcome back</h1>
+      <h1 className="text-gradient-brand text-2xl font-semibold">Welcome back</h1>
       <p className="mt-1 text-sm text-muted">Log in to manage your wholesale orders.</p>
       <div className="mt-6">
         {profile && (

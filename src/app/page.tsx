@@ -21,6 +21,7 @@ import { Reveal } from "@/components/marketing/reveal";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { Logo } from "@/components/brand/logo";
+import { CountUp } from "@/components/ui/count-up";
 import { cn } from "@/lib/utils";
 
 const SHELL = "mx-auto w-full max-w-7xl px-5 sm:px-8";
@@ -99,7 +100,9 @@ export default function Home() {
           <div className={cn(SHELL, "grid grid-cols-2 gap-6 py-10 sm:grid-cols-4")}>
             {stats.map((s) => (
               <div key={s.label} className="text-center">
-                <p className="font-display text-4xl font-semibold text-brown-700">{s.value}</p>
+                <p className="font-display text-4xl font-semibold text-brown-700">
+                  <CountUp value={Number(s.value)} />
+                </p>
                 <p className="mt-1 text-sm text-muted">{s.label}</p>
               </div>
             ))}

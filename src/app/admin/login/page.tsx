@@ -5,6 +5,7 @@ import { getCurrentProfile } from "@/lib/auth";
 import { STAFF_ROLES } from "@/lib/types";
 import { SignedInNotice } from "@/components/auth/signed-in-notice";
 import { BrandMark } from "@/components/brand/logo";
+import { AuroraBackground } from "@/components/ui/aurora-background";
 import { AdminLoginForm } from "./admin-login-form";
 
 export const metadata: Metadata = {
@@ -24,24 +25,25 @@ export default async function AdminLoginPage({
 
   return (
     <div className="relative flex min-h-dvh items-center justify-center overflow-hidden bg-brown-900 px-5 py-12">
-      {/* warm glow + grain on the dark admin backdrop */}
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-72 bg-[radial-gradient(60%_60%_at_50%_0%,rgba(242,180,65,0.18),transparent_70%)]" />
+      <AuroraBackground variant="dark" />
       <div className="bg-grain pointer-events-none absolute inset-0 opacity-[0.07]" />
 
-      <div className="relative w-full max-w-sm">
+      <div className="animate-fade-up relative w-full max-w-sm">
         <div className="mb-7 flex flex-col items-center text-center">
-          <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-cream shadow-lg">
+          <span className="animate-scale-in flex h-12 w-12 items-center justify-center rounded-2xl bg-cream shadow-lg ring-4 ring-white/10">
             <BrandMark className="h-7 w-7 text-[#d9833f]" />
           </span>
           <h1 className="mt-4 font-display text-2xl font-semibold text-cream">
-            CoopCart Admin
+            CoopCart <span className="text-yolk-400">Admin</span>
           </h1>
           <p className="mt-1 flex items-center gap-1.5 text-sm text-brown-100/70">
             <Lock className="h-3.5 w-3.5" /> Staff &amp; management console
           </p>
         </div>
 
-        <div className="rounded-3xl border border-white/10 bg-cream p-7 shadow-[0_30px_70px_-30px_rgba(0,0,0,0.6)] sm:p-8">
+        <div className="overflow-hidden rounded-3xl border border-white/10 shadow-[0_30px_70px_-30px_rgba(0,0,0,0.6)]">
+          <div className="bg-animated-gradient h-1.5 bg-gradient-to-r from-yolk-400 via-[#d9833f] to-sage-400" />
+          <div className="bg-cream p-7 sm:p-8">
           {profile && (
             <SignedInNotice
               email={profile.email}
@@ -52,6 +54,7 @@ export default async function AdminLoginPage({
             />
           )}
           <AdminLoginForm next={next} />
+          </div>
         </div>
 
         <div className="mt-6 flex items-center justify-between text-sm">
