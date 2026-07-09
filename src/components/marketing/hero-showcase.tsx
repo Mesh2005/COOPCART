@@ -82,11 +82,20 @@ export function HeroShowcase() {
             type="button"
             onClick={() => setSlide(i)}
             aria-label={`Show ${label}`}
+            aria-pressed={slide === i}
             className={cn(
-              "h-1.5 rounded-full transition-all",
-              slide === i ? "w-6 bg-brown-500" : "w-2 bg-brown-200 hover:bg-brown-300",
+              "inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium transition-colors",
+              slide === i ? "bg-brown-600 text-cream" : "text-muted hover:bg-brown-50",
             )}
-          />
+          >
+            <span
+              className={cn(
+                "h-1.5 w-1.5 rounded-full",
+                slide === i ? "bg-cream" : "bg-brown-300",
+              )}
+            />
+            {label}
+          </button>
         ))}
       </div>
     </div>

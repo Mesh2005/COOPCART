@@ -160,25 +160,6 @@ export function HeroDashboard({ className }: { className?: string }) {
           </div>
         </div>
       </motion.div>
-
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.85, duration: 0.5, ease: EASE }}
-        className="absolute -left-4 top-10 rounded-2xl border border-line bg-surface/90 px-3.5 py-2 shadow-lg backdrop-blur"
-      >
-        <p className="text-[11px] font-medium text-muted">New order</p>
-        <p className="text-sm font-semibold text-brown-900">+3 today</p>
-      </motion.div>
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1, duration: 0.5, ease: EASE }}
-        className="absolute -bottom-4 right-2 rounded-2xl border border-line bg-surface/90 px-3.5 py-2 shadow-lg backdrop-blur"
-      >
-        <p className="text-[11px] font-medium text-muted">Fulfilment</p>
-        <p className="text-sm font-semibold text-brown-900">On schedule</p>
-      </motion.div>
     </div>
   );
 }
