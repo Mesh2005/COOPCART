@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 import {
   motion,
   useMotionValue,
@@ -17,8 +17,6 @@ const EASE = [0.22, 1, 0.36, 1] as const;
 const bars = [46, 62, 54, 78, 60, 96, 71];
 const days = ["M", "T", "W", "T", "F", "S", "S"];
 const zones = ["Negombo", "Katunayake", "Seeduwa", "Ja-Ela", "Wattala", "Colombo suburbs"];
-const MAP_SRC =
-  "https://maps.google.com/maps?q=F24W%2B3C%20Galahitiyawa%2C%20Sri%20Lanka&z=14&output=embed";
 const segments = [
   { label: "Delivered", count: 18, pct: 75, bar: "bg-green-500", dot: "bg-green-500" },
   { label: "In transit", count: 4, pct: 17, bar: "bg-orange-400", dot: "bg-orange-400" },
@@ -50,14 +48,6 @@ export function HeroDashboard({ className }: { className?: string }) {
     px.set(0);
     py.set(0);
   }
-
-  // Auto-alternate the info panel between delivery zones and the farm map.
-  const [slide, setSlide] = useState(0);
-  useEffect(() => {
-    if (reduce) return;
-    const t = setInterval(() => setSlide((s) => (s + 1) % 2), 5000);
-    return () => clearInterval(t);
-  }, [reduce]);
 
   return (
     <div
@@ -123,61 +113,20 @@ export function HeroDashboard({ className }: { className?: string }) {
           </div>
 
           <div className="mt-3.5">
-            <div className="relative h-[112px] overflow-hidden rounded-xl border border-line bg-brown-50/40">
-              {/* Slide 1 — delivery zones */}
-              <div
-                className={cn(
-                  "absolute inset-0 flex flex-col justify-center px-3 transition-opacity duration-700",
-                  slide === 0 ? "opacity-100" : "pointer-events-none opacity-0",
-                )}
-              >
-                <div className="mb-2 flex items-center gap-1 text-[11px] font-medium text-brown-700">
-                  <MapPin className="h-3 w-3 text-[#d9833f]" /> Delivery zones
-                </div>
-                <div className="relative overflow-hidden [mask-image:linear-gradient(90deg,transparent,#000_10%,#000_90%,transparent)]">
-                  <div className="flex w-max animate-marquee gap-2">
-                    {[...zones, ...zones].map((z, i) => (
-                      <span
-                        key={i}
-                        className="inline-flex flex-shrink-0 items-center gap-1 rounded-full bg-surface px-2.5 py-1 text-[11px] font-medium text-brown-700"
-                      >
-                        <MapPin className="h-3 w-3 text-[#d9833f]" /> {z}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-              {/* Slide 2 — farm location map (stays mounted so it doesn't reload) */}
-              <div
-                className={cn(
-                  "absolute inset-0 transition-opacity duration-700",
-                  slide === 1 ? "opacity-100" : "pointer-events-none opacity-0",
-                )}
-              >
-                <iframe
-                  title="Abeyrathna Farms location"
-                  src={MAP_SRC}
-                  loading="lazy"
-                  className="h-full w-full border-0"
-                />
-                <span className="pointer-events-none absolute bottom-1.5 left-1.5 inline-flex items-center gap-1 rounded-full bg-surface/90 px-2 py-1 text-[11px] font-medium text-brown-800 shadow-sm backdrop-blur">
-                  <MapPin className="h-3 w-3 text-[#d9833f]" /> Abeyrathna Farms · Galahitiyawa
-                </span>
-              </div>
+            <div className="mb-1.5 flex items-center gap-1 text-[11px] text-muted">
+              <MapPin className="h-3 w-3 text-[#d9833f]" /> Delivery zones
             </div>
-            <div className="mt-2 flex justify-center gap-1.5">
-              {[0, 1].map((i) => (
-                <button
-                  key={i}
-                  type="button"
-                  onClick={() => setSlide(i)}
-                  aria-label={i === 0 ? "Show delivery zones" : "Show farm map"}
-                  className={cn(
-                    "h-1.5 rounded-full transition-all",
-                    slide === i ? "w-4 bg-brown-500" : "w-1.5 bg-brown-200",
-                  )}
-                />
-              ))}
+            <div className="relative overflow-hidden [mask-image:linear-gradient(90deg,transparent,#000_10%,#000_90%,transparent)]">
+              <div className="flex w-max animate-marquee gap-2">
+                {[...zones, ...zones].map((z, i) => (
+                  <span
+                    key={i}
+                    className="inline-flex flex-shrink-0 items-center gap-1 rounded-full bg-brown-50 px-2.5 py-1 text-[11px] font-medium text-brown-700"
+                  >
+                    <MapPin className="h-3 w-3 text-[#d9833f]" /> {z}
+                  </span>
+                ))}
+              </div>
             </div>
           </div>
 
