@@ -7,7 +7,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { PixelTrail } from "@/components/ui/pixel-trail";
 import { useScreenSize } from "@/components/hooks/use-screen-size";
 import { cn } from "@/lib/utils";
-import { EggTray } from "./egg-tray";
+import { HeroDashboard } from "./hero-dashboard";
 
 const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
 
@@ -93,27 +93,7 @@ export function Hero() {
           transition={{ duration: 0.7, delay: 0.1, ease: EASE }}
           className="pointer-events-auto relative mx-auto w-full max-w-md"
         >
-          <EggTray />
-
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.5, ease: EASE }}
-            className="absolute -left-4 top-6 rounded-2xl border border-line bg-surface/90 px-4 py-2.5 shadow-lg backdrop-blur"
-          >
-            <p className="text-[11px] font-medium text-muted">Grade</p>
-            <p className="text-sm font-semibold text-brown-900">Brown · Large</p>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.65, ease: EASE }}
-            className="absolute -bottom-4 right-2 rounded-2xl border border-line bg-surface/90 px-4 py-2.5 shadow-lg backdrop-blur"
-          >
-            <p className="text-[11px] font-medium text-muted">Sold by</p>
-            <p className="text-sm font-semibold text-brown-900">Tray of 30</p>
-          </motion.div>
+          <HeroDashboard />
         </motion.div>
       </div>
     </section>
