@@ -19,6 +19,7 @@ export function LiveChatPanel() {
 
   useEffect(() => {
     let channel: ReturnType<typeof supabase.channel> | undefined;
+    let cancelled = false;
     (async () => {
       const {
         data: { user },
@@ -51,7 +52,7 @@ export function LiveChatPanel() {
           .single();
         conv = created;
       }
-      if (!conv) return;
+      if (!conv || cancelled) return;
       setConvId(conv.id);
 
       const { data: msgs } = await supabase
@@ -59,10 +60,11 @@ export function LiveChatPanel() {
         .select("id, sender_role, body, created_at")
         .eq("conversation_id", conv.id)
         .order("created_at");
+      if (cancelled) return;
       setMessages(msgs ?? []);
 
       channel = supabase
-        .channel(`chat:${conv.id}`)
+        .channel(`chat:${conv.id}:${Math.random().toString(36).slice(2)}`)
         .on(
           "postgres_changes",
           { event: "INSERT", schema: "public", table: "chat_messages", filter: `conversation_id=eq.${conv.id}` },
@@ -74,6 +76,7 @@ export function LiveChatPanel() {
         .subscribe();
     })();
     return () => {
+      cancelled = true;
       if (channel) supabase.removeChannel(channel);
     };
   }, [supabase]);

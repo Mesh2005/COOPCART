@@ -58,25 +58,25 @@ export function SupportInbox() {
 
   // init: staff id + conversations + list realtime
   useEffect(() => {
-    let channel: ReturnType<typeof supabase.channel> | undefined;
     (async () => {
       const { data: { user } } = await supabase.auth.getUser();
       setStaffId(user?.id ?? null);
       await loadConvs();
-      channel = supabase
-        .channel("support:conversations")
-        .on("postgres_changes", { event: "*", schema: "public", table: "chat_conversations" }, () => loadConvs())
-        .subscribe();
     })();
+    // Subscribe synchronously with a unique topic so re-mounts never reuse an
+    // already-subscribed channel (which would throw on .on() after subscribe).
+    const channel = supabase
+      .channel(`support:conversations:${Math.random().toString(36).slice(2)}`)
+      .on("postgres_changes", { event: "*", schema: "public", table: "chat_conversations" }, () => loadConvs())
+      .subscribe();
     return () => {
-      if (channel) supabase.removeChannel(channel);
+      supabase.removeChannel(channel);
     };
   }, [supabase, loadConvs]);
 
   // messages for the active conversation + realtime
   useEffect(() => {
     if (!activeId) return;
-    let channel: ReturnType<typeof supabase.channel> | undefined;
     (async () => {
       const { data } = await supabase
         .from("chat_messages")
@@ -84,20 +84,20 @@ export function SupportInbox() {
         .eq("conversation_id", activeId)
         .order("created_at");
       setMessages((data ?? []) as Row[]);
-      channel = supabase
-        .channel(`support:${activeId}`)
-        .on(
-          "postgres_changes",
-          { event: "INSERT", schema: "public", table: "chat_messages", filter: `conversation_id=eq.${activeId}` },
-          (payload) => {
-            const row = payload.new as Row;
-            setMessages((m) => (m.some((x) => x.id === row.id) ? m : [...m, row]));
-          },
-        )
-        .subscribe();
     })();
+    const channel = supabase
+      .channel(`support:${activeId}:${Math.random().toString(36).slice(2)}`)
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "chat_messages", filter: `conversation_id=eq.${activeId}` },
+        (payload) => {
+          const row = payload.new as Row;
+          setMessages((m) => (m.some((x) => x.id === row.id) ? m : [...m, row]));
+        },
+      )
+      .subscribe();
     return () => {
-      if (channel) supabase.removeChannel(channel);
+      supabase.removeChannel(channel);
     };
   }, [activeId, supabase]);
 
