@@ -15,10 +15,10 @@ import { cn } from "@/lib/utils";
 const EASE = [0.22, 1, 0.36, 1] as const;
 const bars = [46, 62, 54, 78, 60, 96, 71];
 const days = ["M", "T", "W", "T", "F", "S", "S"];
-const orders = [
-  { id: "CC-2026-00042", biz: "Sunrise Bakery", label: "Delivered", cls: "bg-green-100 text-green-700" },
-  { id: "CC-2026-00041", biz: "Lanka Grand Hotel", label: "Confirmed", cls: "bg-blue-100 text-blue-700" },
-  { id: "CC-2026-00040", biz: "City Grocers", label: "Pending", cls: "bg-amber-100 text-amber-700" },
+const segments = [
+  { label: "Delivered", count: 18, pct: 75, bar: "bg-green-500", dot: "bg-green-500" },
+  { label: "In transit", count: 4, pct: 17, bar: "bg-orange-400", dot: "bg-orange-400" },
+  { label: "Pending", count: 2, pct: 8, bar: "bg-amber-400", dot: "bg-amber-400" },
 ];
 
 /**
@@ -110,24 +110,33 @@ export function HeroDashboard({ className }: { className?: string }) {
             ))}
           </div>
 
-          <div className="mt-4 space-y-2 border-t border-line pt-3">
-            {orders.map((o, i) => (
-              <motion.div
-                key={o.id}
-                initial={{ opacity: 0, x: -8 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.65 + i * 0.15, duration: 0.4, ease: EASE }}
-                className="flex items-center justify-between gap-2"
-              >
-                <div className="min-w-0">
-                  <p className="truncate text-xs font-semibold text-brown-900">{o.id}</p>
-                  <p className="truncate text-[11px] text-muted">{o.biz}</p>
-                </div>
-                <span className={cn("flex-shrink-0 rounded-full px-2.5 py-1 text-[11px] font-semibold", o.cls)}>
-                  {o.label}
+          <div className="mt-4 border-t border-line pt-3">
+            <div className="flex items-center justify-between">
+              <p className="text-xs font-medium text-brown-800">Order status</p>
+              <p className="text-[11px] text-muted">today</p>
+            </div>
+            <div className="mt-2 flex h-2.5 w-full overflow-hidden rounded-full bg-brown-50">
+              {segments.map((s, i) => (
+                <motion.div
+                  key={s.label}
+                  initial={{ width: 0 }}
+                  animate={{ width: `${s.pct}%` }}
+                  transition={{ delay: 0.6 + i * 0.12, duration: 0.6, ease: EASE }}
+                  className={s.bar}
+                />
+              ))}
+            </div>
+            <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1.5">
+              {segments.map((s) => (
+                <span key={s.label} className="inline-flex items-center gap-1.5 text-[11px] text-muted">
+                  <span className={cn("h-2 w-2 rounded-full", s.dot)} />
+                  {s.label}{" "}
+                  <b className="font-semibold text-brown-800">
+                    <CountUp value={s.count} />
+                  </b>
                 </span>
-              </motion.div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       </motion.div>
