@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Egg, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
+import { Logo } from "@/components/brand/logo";
 import { cn } from "@/lib/utils";
 
 const nav = [
@@ -34,18 +35,8 @@ export function SiteHeader() {
       )}
     >
       <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-5 py-3.5 sm:px-8">
-        <Link href="/" className="flex items-center gap-2.5">
-          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-brown-600 text-cream">
-            <Egg className="h-5 w-5" />
-          </span>
-          <span className="leading-none">
-            <span className="block font-display text-lg font-semibold text-brown-900">
-              CoopCart
-            </span>
-            <span className="block text-[11px] tracking-wide text-muted">
-              Abeyrathna Farms
-            </span>
-          </span>
+        <Link href="/" className="flex items-center text-brown-900">
+          <Logo />
         </Link>
 
         <nav className="hidden items-center gap-7 md:flex">

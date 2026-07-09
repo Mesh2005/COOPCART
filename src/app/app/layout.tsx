@@ -1,11 +1,11 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { Egg } from "lucide-react";
 import { getMyBusiness, requireProfile } from "@/lib/auth";
 import { STAFF_ROLES } from "@/lib/types";
 import { NavLinks } from "@/components/dashboard/nav-links";
 import { LogoutButton } from "@/components/dashboard/logout-button";
 import { PageTransition } from "@/components/ui/page-transition";
+import { Logo } from "@/components/brand/logo";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const profile = await requireProfile();
@@ -16,14 +16,8 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   return (
     <div className="min-h-dvh lg:grid lg:grid-cols-[260px_1fr]">
       <aside className="hidden border-r border-line bg-surface/60 lg:flex lg:flex-col">
-        <Link href="/" className="flex items-center gap-2.5 px-5 py-5">
-          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-brown-600 text-cream">
-            <Egg className="h-5 w-5" />
-          </span>
-          <span className="leading-none">
-            <span className="block font-display text-lg font-semibold text-brown-900">CoopCart</span>
-            <span className="block text-[11px] tracking-wide text-muted">Wholesale portal</span>
-          </span>
+        <Link href="/" className="flex items-center px-5 py-5 text-brown-900">
+          <Logo tagline="Wholesale portal" />
         </Link>
         <div className="px-3">
           <NavLinks section="app" />

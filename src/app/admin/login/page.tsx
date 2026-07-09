@@ -1,9 +1,10 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { Egg, Lock, ArrowLeft } from "lucide-react";
+import { Lock, ArrowLeft } from "lucide-react";
 import { getCurrentProfile } from "@/lib/auth";
 import { STAFF_ROLES } from "@/lib/types";
 import { SignedInNotice } from "@/components/auth/signed-in-notice";
+import { BrandMark } from "@/components/brand/logo";
 import { AdminLoginForm } from "./admin-login-form";
 
 export const metadata: Metadata = {
@@ -29,8 +30,8 @@ export default async function AdminLoginPage({
 
       <div className="relative w-full max-w-sm">
         <div className="mb-7 flex flex-col items-center text-center">
-          <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-yolk-400 text-brown-900 shadow-lg">
-            <Egg className="h-6 w-6" />
+          <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-cream shadow-lg">
+            <BrandMark className="h-7 w-7 text-[#d9833f]" />
           </span>
           <h1 className="mt-4 font-display text-2xl font-semibold text-cream">
             CoopCart Admin

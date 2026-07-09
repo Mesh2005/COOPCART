@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { Egg, Home, ArrowLeft } from "lucide-react";
+import { Home, ArrowLeft } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
+import { BrandMark } from "@/components/brand/logo";
 import { cn } from "@/lib/utils";
 
 export default function NotFound() {
@@ -10,8 +11,8 @@ export default function NotFound() {
       <div className="bg-grain pointer-events-none absolute inset-0 opacity-60" />
 
       <div className="animate-scale-in relative">
-        <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-3xl bg-brown-600 text-cream shadow-lg">
-          <Egg className="h-10 w-10" />
+        <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-3xl bg-surface shadow-lg ring-1 ring-line">
+          <BrandMark className="h-11 w-11 text-[#d9833f]" />
         </div>
       </div>
 

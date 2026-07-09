@@ -20,6 +20,7 @@ import { Hero } from "@/components/marketing/hero";
 import { Reveal } from "@/components/marketing/reveal";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
+import { Logo } from "@/components/brand/logo";
 import { cn } from "@/lib/utils";
 
 const SHELL = "mx-auto w-full max-w-7xl px-5 sm:px-8";
@@ -308,16 +309,8 @@ export default function Home() {
       <footer className="border-t border-line bg-surface/60">
         <div className={cn(SHELL, "grid gap-10 py-14 sm:grid-cols-2 lg:grid-cols-4")}>
           <div>
-            <div className="flex items-center gap-2.5">
-              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-brown-600 text-cream">
-                <Egg className="h-5 w-5" />
-              </span>
-              <span className="leading-none">
-                <span className="block font-display text-lg font-semibold text-brown-900">
-                  CoopCart
-                </span>
-                <span className="block text-[11px] tracking-wide text-muted">Abeyrathna Farms</span>
-              </span>
+            <div className="flex items-center text-brown-900">
+              <Logo />
             </div>
             <p className="mt-4 max-w-xs text-sm text-muted">
               Wholesale farm-fresh brown eggs, ordered online and delivered on schedule.
