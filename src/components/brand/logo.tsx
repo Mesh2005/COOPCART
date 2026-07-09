@@ -1,10 +1,12 @@
+"use client";
+
+import { useState } from "react";
 import { cn } from "@/lib/utils";
 
 /**
- * CoopCart rooster brand mark. Uses currentColor so the placement controls
- * the colour (brand orange on light surfaces, cream on the dark admin
- * sidebar). To use the exact official artwork instead, drop it at
- * public/logo.png and swap this SVG for <img src="/logo.png" />.
+ * CoopCart rooster brand mark (SVG fallback). Uses currentColor so the
+ * placement controls the colour. This is shown when public/logo.png is
+ * absent, and as the small mark in badges.
  */
 export function BrandMark({ className }: { className?: string }) {
   return (
@@ -16,20 +18,13 @@ export function BrandMark({ className }: { className?: string }) {
       fill="none"
     >
       <g fill="currentColor">
-        {/* tail feathers */}
         <path d="M15 31 C6 28 6 14 12 10 C12.5 18 17 21 21 22.5 C18 25.5 16.5 28 16.5 32 Z" />
-        {/* body */}
         <path d="M14.5 30.5 C14.5 22.5 20.5 18 27.5 19.2 C33.5 20.2 36.5 25 34.5 31 C33 36 27.5 39 21.5 38 C16.8 37.2 14.5 34.2 14.5 30.5 Z" />
-        {/* neck + head */}
         <path d="M30 22 C30.5 15.5 34.5 12 38.8 13 C43 14 44 19 40.8 22 C38.5 24 35 24 33 26 C32 24.3 31 23 30 22 Z" />
-        {/* comb */}
         <path d="M35.5 9.5 C36.5 6.5 38.5 7.2 38.8 9.5 C40.5 6.8 42.8 8.3 42 10.5 C40.5 11 37 11 35.5 11 Z" />
-        {/* beak */}
         <path d="M43 17.5 L48 18.5 L43 20.5 Z" />
-        {/* wattle */}
         <path d="M40 21.5 C42 23.5 42 26.5 40 27.5 C38 25.5 38 22.5 40 21.5 Z" />
       </g>
-      {/* legs */}
       <path
         d="M23 37.5 L22 44 M18.5 44 L26 44 M28 37.5 L28 44 M24.5 44 L32 44"
         stroke="currentColor"
@@ -37,13 +32,16 @@ export function BrandMark({ className }: { className?: string }) {
         strokeLinecap="round"
         strokeLinejoin="round"
       />
-      {/* eye */}
       <circle cx="37.5" cy="18" r="1.3" fill="var(--color-cream, #fff)" />
     </svg>
   );
 }
 
-/** Full lockup: rooster mark + "CoopCart" wordmark (+ optional tagline). */
+/**
+ * Full brand lockup. Renders the official artwork from /logo.png when it
+ * exists; otherwise falls back to the rooster mark + "CoopCart" wordmark.
+ * Drop the official logo at public/logo.png and it appears everywhere.
+ */
 export function Logo({
   className,
   markClassName,
@@ -55,6 +53,27 @@ export function Logo({
   tagline?: string | null;
   compact?: boolean;
 }) {
+  const [imgFailed, setImgFailed] = useState(false);
+
+  if (!imgFailed) {
+    return (
+      <span className={cn("flex items-center gap-2.5", className)}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/logo.png"
+          alt="CoopCart — Abeyrathna Farms"
+          onError={() => setImgFailed(true)}
+          className={cn("w-auto object-contain", compact ? "h-8" : "h-10")}
+        />
+        {tagline && (
+          <span className="hidden text-[11px] tracking-wide opacity-70 sm:block">
+            {tagline}
+          </span>
+        )}
+      </span>
+    );
+  }
+
   return (
     <span className={cn("flex items-center gap-2.5", className)}>
       <BrandMark className={cn("h-8 w-8 text-[#d9833f]", markClassName)} />
