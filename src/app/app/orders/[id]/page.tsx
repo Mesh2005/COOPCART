@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, FileText } from "lucide-react";
 import { getOrderById, getSlipSignedUrl } from "@/lib/data/orders";
 import { getActiveBankAccounts } from "@/lib/data/settings";
 import { OrderTimeline } from "@/components/orders/order-timeline";
@@ -59,7 +59,15 @@ export default async function OrderDetailPage({
           <h1 className="text-2xl text-brown-900">{order.order_number}</h1>
           <p className="text-sm text-muted">Placed {formatDate(order.placed_at)}</p>
         </div>
-        <OrderStatusPill status={order.status} />
+        <div className="flex items-center gap-3">
+          <Link
+            href={`/app/orders/${order.id}/invoice`}
+            className="inline-flex items-center gap-1.5 rounded-full border border-line px-3 py-1.5 text-xs font-medium text-brown-700 hover:bg-brown-50"
+          >
+            <FileText className="h-3.5 w-3.5" /> Invoice
+          </Link>
+          <OrderStatusPill status={order.status} />
+        </div>
       </div>
 
       <div className="grid gap-6 sm:grid-cols-2">
