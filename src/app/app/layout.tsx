@@ -6,6 +6,7 @@ import { NavLinks } from "@/components/dashboard/nav-links";
 import { LogoutButton } from "@/components/dashboard/logout-button";
 import { PageTransition } from "@/components/ui/page-transition";
 import { Logo } from "@/components/brand/logo";
+import { NotificationBell } from "@/components/notifications/notification-bell";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const profile = await requireProfile();
@@ -32,7 +33,10 @@ export default async function AppLayout({ children }: { children: React.ReactNod
             </p>
             <p className="truncate text-xs text-muted">{profile.email}</p>
           </div>
-          <LogoutButton />
+          <div className="flex items-center gap-1">
+            <NotificationBell />
+            <LogoutButton />
+          </div>
         </header>
 
         <div className="border-b border-line bg-surface/40 px-3 py-2 lg:hidden">

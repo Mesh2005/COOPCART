@@ -4,6 +4,7 @@ import { NavLinks } from "@/components/dashboard/nav-links";
 import { LogoutButton } from "@/components/dashboard/logout-button";
 import { PageTransition } from "@/components/ui/page-transition";
 import { Logo } from "@/components/brand/logo";
+import { NotificationBell } from "@/components/notifications/notification-bell";
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const profile = await requireStaff();
@@ -25,7 +26,10 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             <p className="text-sm font-semibold text-brown-900">{profile.full_name ?? "Staff"}</p>
             <p className="text-xs capitalize text-muted">{profile.role}</p>
           </div>
-          <LogoutButton redirectTo="/admin/login" />
+          <div className="flex items-center gap-1">
+            <NotificationBell />
+            <LogoutButton redirectTo="/admin/login" />
+          </div>
         </header>
 
         <div className="border-b border-line bg-surface/40 px-3 py-2 lg:hidden">
