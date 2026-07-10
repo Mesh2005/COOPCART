@@ -3,6 +3,9 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { getMyBusiness } from "@/lib/auth";
+import { getCart } from "@/lib/data/cart";
+import { formatLKR } from "@/lib/format";
 import type { ActionState } from "./state";
 
 export async function placeOrder(_prev: ActionState, formData: FormData): Promise<ActionState> {
@@ -24,6 +27,23 @@ export async function placeOrder(_prev: ActionState, formData: FormData): Promis
   }
   if (paymentMethod !== "bank_transfer" && paymentMethod !== "cod") {
     return { error: "Please choose a payment method." };
+  }
+
+  // Enforce the business's cash-on-delivery credit limit (if one is set).
+  if (paymentMethod === "cod") {
+    const business = await getMyBusiness();
+    if (business?.cod_limit != null) {
+      const cart = await getCart();
+      if (cart.subtotal > business.cod_limit) {
+        return {
+          error: `Your cash-on-delivery limit is ${formatLKR(
+            business.cod_limit,
+          )}. This order (${formatLKR(
+            cart.subtotal,
+          )}) is over it — please pay by bank transfer instead.`,
+        };
+      }
+    }
   }
 
   const supabase = await createSupabaseServerClient();

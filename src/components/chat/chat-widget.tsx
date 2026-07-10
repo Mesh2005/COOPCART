@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { MessageCircle, X, Send, Egg, Bot, Headset } from "lucide-react";
+import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
 import { LiveChatPanel } from "./live-chat-panel";
 
@@ -25,11 +26,48 @@ export function ChatWidget() {
   const [messages, setMessages] = useState<Msg[]>([GREETING]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [unread, setUnread] = useState(0);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  // Track whether the live chat is being viewed, for the realtime callback.
+  const viewingLive = useRef(false);
+  viewingLive.current = open && tab === "live";
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
   }, [messages, loading]);
+
+  // Unread badge: count staff replies that arrive while the live chat isn't open.
+  useEffect(() => {
+    const supabase = createSupabaseBrowserClient();
+    let channel: ReturnType<typeof supabase.channel> | undefined;
+    (async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) return;
+      channel = supabase
+        .channel(`chat-unread:${Math.random().toString(36).slice(2)}`)
+        .on(
+          "postgres_changes",
+          { event: "INSERT", schema: "public", table: "chat_messages" },
+          (payload) => {
+            if ((payload.new as { sender_role?: string }).sender_role === "staff" && !viewingLive.current) {
+              setUnread((u) => u + 1);
+            }
+          },
+        )
+        .subscribe();
+    })();
+    return () => {
+      if (channel) supabase.removeChannel(channel);
+    };
+  }, []);
+
+  // Clear the badge when the user opens the live chat.
+  useEffect(() => {
+    if (open && tab === "live") setUnread(0);
+  }, [open, tab]);
 
   async function send(text: string) {
     const content = text.trim();
@@ -68,6 +106,11 @@ export function ChatWidget() {
         className="fixed bottom-5 right-5 z-[60] flex h-14 w-14 items-center justify-center rounded-full bg-brown-600 text-cream shadow-lg transition-transform hover:scale-105 active:scale-95"
       >
         {open ? <X className="h-6 w-6" /> : <MessageCircle className="h-6 w-6" />}
+        {!open && unread > 0 && (
+          <span className="absolute -right-0.5 -top-0.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-[11px] font-bold text-white ring-2 ring-cream">
+            {unread > 9 ? "9+" : unread}
+          </span>
+        )}
       </button>
 
       {open && (
