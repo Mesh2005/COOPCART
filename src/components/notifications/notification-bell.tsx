@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Bell, Check } from "lucide-react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+import { toast } from "@/components/ui/toaster";
 import { cn } from "@/lib/utils";
 
 type Note = {
@@ -53,7 +54,13 @@ export function NotificationBell({ dark }: { dark?: boolean }) {
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "notifications" },
-        () => load(),
+        (payload) => {
+          if (payload.eventType === "INSERT") {
+            const title = (payload.new as { title?: string }).title;
+            if (title) toast(title, "info");
+          }
+          load();
+        },
       )
       .subscribe();
     return () => {

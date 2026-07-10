@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Fraunces, Plus_Jakarta_Sans } from "next/font/google";
 import { SITE_URL } from "@/lib/env";
 import { ChatWidget } from "@/components/chat/chat-widget";
+import { Toaster } from "@/components/ui/toaster";
 import "./globals.css";
 
 const sans = Plus_Jakarta_Sans({
@@ -80,6 +81,7 @@ export default function RootLayout({
         </a>
         {children}
         <ChatWidget />
+        <Toaster />
       </body>
     </html>
   );
