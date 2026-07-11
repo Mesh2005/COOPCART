@@ -1,14 +1,28 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, FileText } from "lucide-react";
-import { getOrderById, getSlipSignedUrl } from "@/lib/data/orders";
+import { ArrowLeft, CircleCheck, Clock, FileText, Package, Store, Truck } from "lucide-react";
+import { getOrderById, getOrderEvents, getSlipSignedUrl } from "@/lib/data/orders";
 import { getActiveBankAccounts } from "@/lib/data/settings";
 import { OrderTimeline } from "@/components/orders/order-timeline";
+import { OrderTrackingLive } from "@/components/orders/order-tracking-live";
 import { SlipUpload } from "@/components/orders/slip-upload";
 import { Alert } from "@/components/ui/alert";
 import { OrderStatusPill } from "@/components/ui/status-pill";
-import { PAYMENT_STATUS_LABELS } from "@/lib/labels";
+import { ORDER_STATUS_LABELS, PAYMENT_STATUS_LABELS } from "@/lib/labels";
 import { formatDate, formatLKR } from "@/lib/format";
+import type { OrderStatus } from "@/lib/types";
+
+/** Short customer-facing blurb + icon for the tracking summary banner. */
+const TRACKING: Record<OrderStatus, { icon: typeof Clock; blurb: string }> = {
+  pending: { icon: Clock, blurb: "We’ve received your order and will confirm it shortly." },
+  confirmed: { icon: CircleCheck, blurb: "Your order is confirmed and queued for packing." },
+  packed: { icon: Package, blurb: "Your trays are packed and ready to go." },
+  out_for_delivery: { icon: Truck, blurb: "Your order is on the way." },
+  ready_for_pickup: { icon: Store, blurb: "Your order is ready to collect from the farm." },
+  delivered: { icon: CircleCheck, blurb: "Delivered. Thank you for your order!" },
+  completed: { icon: CircleCheck, blurb: "Completed. Thank you for your order!" },
+  cancelled: { icon: Clock, blurb: "This order was cancelled." },
+};
 
 function Row({ k, v }: { k: string; v: string }) {
   return (
@@ -28,11 +42,15 @@ export default async function OrderDetailPage({
 }) {
   const { id } = await params;
   const { placed } = await searchParams;
-  const data = await getOrderById(id);
+  const [data, events] = await Promise.all([getOrderById(id), getOrderEvents(id)]);
   if (!data) notFound();
 
   const { order, items, payment } = data;
   const isBank = order.payment_method === "bank_transfer";
+  const isDelivery = order.fulfillment_type === "delivery";
+  const track = TRACKING[order.status];
+  const TrackIcon = track.icon;
+  const isActive = !["delivered", "completed", "cancelled"].includes(order.status);
   const banks = isBank ? await getActiveBankAccounts() : [];
   const bank = banks[0];
   const slipUrl = payment?.slip_url ? await getSlipSignedUrl(payment.slip_url) : null;
@@ -70,11 +88,43 @@ export default async function OrderDetailPage({
         </div>
       </div>
 
+      {order.status !== "cancelled" && (
+        <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-sage-500/30 bg-sage-500/5 p-4 sm:p-5">
+          <div className="flex items-center gap-3">
+            <span className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full bg-sage-500/15 text-sage-600">
+              <TrackIcon className="h-5 w-5" />
+            </span>
+            <div>
+              <p className="font-semibold text-brown-900">{ORDER_STATUS_LABELS[order.status]}</p>
+              <p className="text-sm text-muted">{track.blurb}</p>
+            </div>
+          </div>
+          {isActive && order.scheduled_date && (
+            <div className="sm:text-right">
+              <p className="text-xs font-medium uppercase tracking-wide text-muted">
+                {isDelivery ? "Estimated delivery" : "Pickup ready by"}
+              </p>
+              <p className="text-sm font-semibold text-brown-900">
+                {formatDate(order.scheduled_date)}
+              </p>
+            </div>
+          )}
+        </div>
+      )}
+
       <div className="grid gap-6 sm:grid-cols-2">
         <div className="rounded-2xl border border-line bg-surface p-5">
-          <h2 className="font-display text-lg font-semibold text-brown-900">Progress</h2>
+          <div className="flex items-center justify-between">
+            <h2 className="font-display text-lg font-semibold text-brown-900">Progress</h2>
+            <OrderTrackingLive orderId={order.id} />
+          </div>
           <div className="mt-4">
-            <OrderTimeline status={order.status} fulfillment={order.fulfillment_type} />
+            <OrderTimeline
+              status={order.status}
+              fulfillment={order.fulfillment_type}
+              events={events}
+              scheduledDate={order.scheduled_date}
+            />
           </div>
         </div>
         <div className="rounded-2xl border border-line bg-surface p-5">

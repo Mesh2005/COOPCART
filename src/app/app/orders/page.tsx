@@ -3,6 +3,7 @@ import { ClipboardList } from "lucide-react";
 import { getMyOrders } from "@/lib/data/orders";
 import { buttonVariants } from "@/components/ui/button";
 import { OrderStatusPill } from "@/components/ui/status-pill";
+import { OrderMiniProgress } from "@/components/orders/order-mini-progress";
 import { formatDate, formatLKR } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
@@ -37,6 +38,9 @@ export default async function OrdersPage() {
               <p className="text-xs text-muted">
                 {formatDate(o.placed_at)} · {o.fulfillment_type === "delivery" ? "Delivery" : "Pickup"}
               </p>
+              <div className="mt-2">
+                <OrderMiniProgress status={o.status} fulfillment={o.fulfillment_type} />
+              </div>
             </div>
             <div className="flex items-center gap-4">
               <OrderStatusPill status={o.status} />

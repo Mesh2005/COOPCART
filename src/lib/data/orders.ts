@@ -1,5 +1,29 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import type { Order, OrderItem, Payment } from "@/lib/types";
+import type { Order, OrderItem, OrderStatus, Payment } from "@/lib/types";
+
+export type OrderEvent = {
+  id: string;
+  order_id: string;
+  status: OrderStatus;
+  note: string | null;
+  created_at: string;
+};
+
+/**
+ * The timestamped status trail for an order, oldest first. Degrades to an
+ * empty list if the order_events table isn't present yet (pre-migration), so
+ * the tracker falls back to deriving progress from the current status.
+ */
+export async function getOrderEvents(orderId: string): Promise<OrderEvent[]> {
+  const supabase = await createSupabaseServerClient();
+  const { data, error } = await supabase
+    .from("order_events")
+    .select("id, order_id, status, note, created_at")
+    .eq("order_id", orderId)
+    .order("created_at", { ascending: true });
+  if (error) return [];
+  return (data ?? []) as unknown as OrderEvent[];
+}
 
 export async function getMyOrders(): Promise<Order[]> {
   const supabase = await createSupabaseServerClient();
