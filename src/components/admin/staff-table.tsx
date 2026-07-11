@@ -65,8 +65,8 @@ function StaffRowActions({ member }: { member: StaffRow }) {
 
 export function StaffTable({ staff }: { staff: StaffRow[] }) {
   return (
-    <div className="overflow-hidden rounded-2xl border border-line">
-      <table className="w-full text-sm">
+    <div className="overflow-x-auto rounded-2xl border border-line">
+      <table className="w-full min-w-[760px] text-sm">
         <thead>
           <tr className="border-b border-line bg-brown-50 text-left text-xs font-semibold uppercase tracking-wide text-muted">
             <th className="px-4 py-3">Name</th>

@@ -34,8 +34,8 @@ export function Hero() {
         pixelClassName="rounded-full bg-yolk-300/55"
       />
 
-      <div className="pointer-events-none relative z-10 mx-auto grid w-full max-w-7xl items-center gap-12 px-5 py-20 sm:px-8 lg:grid-cols-2 lg:py-28">
-        <div>
+      <div className="pointer-events-none relative z-10 mx-auto grid w-full max-w-7xl grid-cols-1 items-center gap-12 px-5 py-20 sm:px-8 lg:grid-cols-2 lg:py-28">
+        <div className="min-w-0">
           <motion.div
             {...fadeUp(0)}
             className="inline-flex items-center gap-2 rounded-full border border-brown-200 bg-surface/70 px-3 py-1 text-xs font-medium text-brown-700 backdrop-blur"
@@ -91,7 +91,7 @@ export function Hero() {
           initial={{ opacity: 0, scale: 0.92, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.1, ease: EASE }}
-          className="pointer-events-auto relative mx-auto w-full max-w-md"
+          className="pointer-events-auto relative mx-auto w-full min-w-0 max-w-md"
         >
           <HeroShowcase />
         </motion.div>

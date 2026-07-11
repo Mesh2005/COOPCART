@@ -65,8 +65,8 @@ export default async function AdminPaymentsPage() {
         <h2 className="mb-4 font-display text-lg font-semibold text-brown-900">
           Recent payments
         </h2>
-        <div className="overflow-hidden rounded-2xl border border-line">
-          <table className="w-full text-sm">
+        <div className="overflow-x-auto rounded-2xl border border-line">
+          <table className="w-full min-w-[720px] text-sm">
             <thead>
               <tr className="border-b border-line bg-brown-50 text-left text-xs font-semibold uppercase tracking-wide text-muted">
                 <th className="px-4 py-3">Order</th>
