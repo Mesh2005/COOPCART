@@ -150,12 +150,16 @@ export async function requestSignupOtp(
   if (sent.delivered) {
     return { otpSent: true, success: `We sent a 6-digit code to ${d.email}.` };
   }
-  if (!hasEmailProvider) {
-    // No email service configured — surface the code so the flow is testable.
+  // Not delivered. Outside production (or with no provider at all), surface the
+  // code so the flow is testable — e.g. Resend test mode only delivers to the
+  // account owner's own address until a domain is verified.
+  if (!hasEmailProvider || process.env.NODE_ENV !== "production") {
     return {
       otpSent: true,
       devCode: code,
-      success: `Email isn't configured yet, so here's your code for testing: ${code}`,
+      success: hasEmailProvider
+        ? `Couldn't email that address in test mode — here's your code for testing: ${code}`
+        : `Email isn't configured yet, so here's your code for testing: ${code}`,
     };
   }
   return { error: sent.error ?? "Could not send the verification email. Please try again." };
