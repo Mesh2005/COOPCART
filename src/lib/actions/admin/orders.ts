@@ -2,8 +2,17 @@
 
 import { revalidatePath } from "next/cache";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { sendOrderStatusEmail } from "@/lib/email";
 import type { ActionState } from "@/lib/actions/state";
 import type { OrderStatus } from "@/lib/types";
+
+const EMAIL_STATUSES: OrderStatus[] = [
+  "confirmed",
+  "packed",
+  "out_for_delivery",
+  "ready_for_pickup",
+  "delivered",
+];
 
 export async function setOrderStatusAction(
   _prev: ActionState,
@@ -21,6 +30,29 @@ export async function setOrderStatusAction(
   });
 
   if (error) return { error: error.message };
+
+  // Email the customer on meaningful status changes.
+  if (EMAIL_STATUSES.includes(newStatus)) {
+    try {
+      const { data: o } = await supabase
+        .from("orders")
+        .select("order_number, businesses(email)")
+        .eq("id", orderId)
+        .single();
+      const rec = o as unknown as { order_number: string; businesses?: { email?: string } } | null;
+      const email = rec?.businesses?.email;
+      if (rec && email) {
+        await sendOrderStatusEmail(email, {
+          id: orderId,
+          orderNumber: rec.order_number,
+          status: newStatus,
+        });
+      }
+    } catch {
+      // ignore email failures
+    }
+  }
+
   revalidatePath("/admin/orders");
   revalidatePath(`/admin/orders/${orderId}`);
   return { success: `Order moved to ${newStatus}.` };

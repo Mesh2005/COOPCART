@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useActionState } from "react";
 import { loginAction } from "@/lib/actions/auth";
 import { initialActionState } from "@/lib/actions/state";
@@ -18,6 +19,9 @@ export function LoginForm({ next, status }: { next?: string; status?: string }) 
           Account created. You can log in once an admin approves your business.
         </Alert>
       )}
+      {status === "reset" && (
+        <Alert variant="success">Password updated. Log in with your new password.</Alert>
+      )}
       {state.error && <Alert variant="error">{state.error}</Alert>}
 
       <input type="hidden" name="next" value={next ?? ""} />
@@ -28,6 +32,12 @@ export function LoginForm({ next, status }: { next?: string; status?: string }) 
       <Field label="Password" htmlFor="password">
         <Input id="password" name="password" type="password" autoComplete="current-password" placeholder="••••••••" required />
       </Field>
+
+      <div className="text-right">
+        <Link href="/forgot-password" className="text-sm font-medium text-brown-600 hover:text-brown-800">
+          Forgot password?
+        </Link>
+      </div>
 
       <Button type="submit" disabled={pending} className="w-full">
         {pending ? "Signing in…" : "Log in"}

@@ -6,7 +6,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { BUSINESS_TYPES, STAFF_ROLES } from "@/lib/types";
 import { createOtp, verifyOtp } from "@/lib/otp";
-import { sendOtpEmail, hasEmailProvider } from "@/lib/email";
+import { sendOtpEmail, sendPasswordResetOtpEmail, hasEmailProvider } from "@/lib/email";
 import type { ActionState } from "./state";
 
 const loginSchema = z.object({
@@ -246,6 +246,76 @@ export async function registerAction(_prev: ActionState, formData: FormData): Pr
   });
   if (signInErr) redirect("/login?status=registered");
   redirect("/app");
+}
+
+/** Step 1 of password reset: email a 6-digit code if the account exists. */
+export async function requestPasswordResetOtp(
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const email = String(formData.get("email") ?? "").trim();
+  if (!z.string().email().safeParse(email).success) {
+    return { error: "Enter a valid email.", fieldErrors: { email: "Invalid email" } };
+  }
+  const admin = createSupabaseAdminClient();
+  const { data: prof } = await admin
+    .from("profiles")
+    .select("id")
+    .eq("email", email.toLowerCase())
+    .maybeSingle();
+  if (!prof) {
+    return {
+      error: "We couldn't find an account with that email.",
+      fieldErrors: { email: "No account found" },
+    };
+  }
+  const code = await createOtp(email);
+  const sent = await sendPasswordResetOtpEmail(email, code);
+  if (sent.delivered) {
+    return { otpSent: true, success: `We sent a reset code to ${email}.` };
+  }
+  if (!hasEmailProvider || process.env.NODE_ENV !== "production") {
+    return {
+      otpSent: true,
+      devCode: code,
+      success: `Reset code (test mode): ${code}`,
+    };
+  }
+  return { error: sent.error ?? "Could not send the reset email. Please try again." };
+}
+
+/** Step 2 of password reset: verify the code and set a new password. */
+export async function resetPasswordAction(
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const email = String(formData.get("email") ?? "").trim();
+  const code = String(formData.get("code") ?? "").trim();
+  const password = String(formData.get("password") ?? "");
+  if (!z.string().email().safeParse(email).success) return { error: "Enter a valid email." };
+  if (password.length < 8) {
+    return { otpSent: true, error: "Password must be at least 8 characters." };
+  }
+  if (!/^\d{6}$/.test(code)) {
+    return { otpSent: true, error: "Enter the 6-digit code from your email." };
+  }
+  const check = await verifyOtp(email, code);
+  if (!check.ok) {
+    return {
+      otpSent: true,
+      error:
+        check.reason === "mismatch"
+          ? "That code is incorrect. Please try again."
+          : "That code has expired. Request a new one.",
+    };
+  }
+  const admin = createSupabaseAdminClient();
+  const { data: list } = await admin.auth.admin.listUsers();
+  const user = list.users.find((u) => u.email?.toLowerCase() === email.toLowerCase());
+  if (!user) return { error: "Account not found." };
+  const { error } = await admin.auth.admin.updateUserById(user.id, { password });
+  if (error) return { otpSent: true, error: error.message };
+  redirect("/login?status=reset");
 }
 
 export async function signOutAction(formData?: FormData) {

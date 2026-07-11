@@ -6,6 +6,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getMyBusiness } from "@/lib/auth";
 import { getCart } from "@/lib/data/cart";
 import { formatLKR } from "@/lib/format";
+import { sendOrderConfirmationEmail } from "@/lib/email";
 import type { ActionState } from "./state";
 
 export async function placeOrder(_prev: ActionState, formData: FormData): Promise<ActionState> {
@@ -58,7 +59,32 @@ export async function placeOrder(_prev: ActionState, formData: FormData): Promis
 
   if (error) return { error: error.message };
 
-  redirect(`/app/orders/${data as string}?placed=1`);
+  // Order-confirmation email (best-effort — never blocks the order).
+  const orderId = data as string;
+  try {
+    const business = await getMyBusiness();
+    if (business?.email) {
+      const { data: o } = await supabase
+        .from("orders")
+        .select("order_number, total, fulfillment_type, scheduled_date, payment_method")
+        .eq("id", orderId)
+        .single();
+      if (o) {
+        await sendOrderConfirmationEmail(business.email, {
+          id: orderId,
+          orderNumber: o.order_number,
+          total: o.total,
+          fulfillment: o.fulfillment_type,
+          date: o.scheduled_date,
+          paymentMethod: o.payment_method,
+        });
+      }
+    }
+  } catch {
+    // ignore email failures
+  }
+
+  redirect(`/app/orders/${orderId}?placed=1`);
 }
 
 export async function uploadSlip(_prev: ActionState, formData: FormData): Promise<ActionState> {
