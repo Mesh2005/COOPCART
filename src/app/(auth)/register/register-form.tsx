@@ -124,17 +124,17 @@ export function RegisterForm() {
       </p>
       {otpState.error && <Alert variant="error">{otpState.error}</Alert>}
 
-      <Field label="Full name" htmlFor="fullName" required error={fe.fullName}>
-        <Input id="fullName" name="fullName" autoComplete="name" required {...bind("fullName")} />
-      </Field>
       <div className="grid gap-4 sm:grid-cols-2">
-        <Field label="Email" htmlFor="email" required error={fe.email}>
-          <Input id="email" name="email" type="email" autoComplete="email" required {...bind("email")} />
+        <Field label="Full name" htmlFor="fullName" required error={fe.fullName}>
+          <Input id="fullName" name="fullName" autoComplete="name" required {...bind("fullName")} />
         </Field>
         <Field label="Phone" htmlFor="phone" required error={fe.phone}>
           <Input id="phone" name="phone" inputMode="tel" autoComplete="tel" required {...bind("phone")} />
         </Field>
       </div>
+      <Field label="Email" htmlFor="email" required error={fe.email}>
+        <Input id="email" name="email" type="email" autoComplete="email" required {...bind("email")} />
+      </Field>
       <Field label="Password" htmlFor="password" required error={fe.password} hint="At least 8 characters">
         <Input id="password" name="password" type="password" autoComplete="new-password" required {...bind("password")} />
       </Field>
