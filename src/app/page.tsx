@@ -6,7 +6,6 @@ import {
   ClipboardCheck,
   Egg,
   Leaf,
-  Mail,
   MapPin,
   PackageCheck,
   Phone,
@@ -342,9 +341,12 @@ export default function Home() {
           <div>
             <h4 className="font-display text-sm font-semibold text-brown-900">Contact</h4>
             <ul className="mt-4 space-y-2.5 text-sm text-muted">
-              <li className="flex items-center gap-2"><Phone className="h-4 w-4 text-brown-400" /> +94 00 000 0000</li>
-              <li className="flex items-center gap-2"><Mail className="h-4 w-4 text-brown-400" /> hello@coopcart.lk</li>
-              <li className="flex items-center gap-2"><MapPin className="h-4 w-4 text-brown-400" /> Negombo, Sri Lanka</li>
+              <li>
+                <a href="tel:+94741923702" className="flex items-center gap-2 hover:text-brown-800">
+                  <Phone className="h-4 w-4 text-brown-400" /> 074 192 3702
+                </a>
+              </li>
+              <li className="flex items-center gap-2"><MapPin className="h-4 w-4 text-brown-400" /> Kuliyapitiya, Sri Lanka</li>
             </ul>
           </div>
         </div>
