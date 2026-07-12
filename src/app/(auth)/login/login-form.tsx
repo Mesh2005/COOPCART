@@ -39,7 +39,7 @@ export function LoginForm({ next, status }: { next?: string; status?: string }) 
         </Link>
       </div>
 
-      <Button type="submit" disabled={pending} className="w-full">
+      <Button type="submit" loading={pending} className="w-full">
         {pending ? "Signing in…" : "Log in"}
       </Button>
     </form>

@@ -41,7 +41,7 @@ export function AdminLoginForm({ next }: { next?: string }) {
         />
       </Field>
 
-      <Button type="submit" variant="accent" disabled={pending} className="w-full">
+      <Button type="submit" variant="accent" loading={pending} className="w-full">
         {pending ? "Signing in…" : "Sign in to console"}
       </Button>
     </form>

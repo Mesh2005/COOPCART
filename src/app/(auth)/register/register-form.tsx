@@ -86,7 +86,7 @@ export function RegisterForm() {
             />
           </Field>
 
-          <Button type="submit" disabled={registering} className="w-full">
+          <Button type="submit" loading={registering} className="w-full">
             {registering ? "Verifying…" : "Verify & create account"}
           </Button>
         </form>
@@ -164,7 +164,7 @@ export function RegisterForm() {
         <Input id="city" name="city" autoComplete="address-level2" required {...bind("city")} />
       </Field>
 
-      <Button type="submit" disabled={requesting} className="w-full">
+      <Button type="submit" loading={requesting} className="w-full">
         {requesting ? "Sending code…" : "Continue — verify email"}
       </Button>
     </form>

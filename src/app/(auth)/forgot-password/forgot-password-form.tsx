@@ -48,7 +48,7 @@ export function ForgotPasswordForm() {
           <Field label="New password" htmlFor="password" required hint="At least 8 characters">
             <Input id="password" name="password" type="password" autoComplete="new-password" required />
           </Field>
-          <Button type="submit" disabled={resetting} className="w-full">
+          <Button type="submit" loading={resetting} className="w-full">
             {resetting ? "Resetting…" : "Reset password"}
           </Button>
         </form>
@@ -91,7 +91,7 @@ export function ForgotPasswordForm() {
           onChange={(e) => setEmail(e.target.value)}
         />
       </Field>
-      <Button type="submit" disabled={requesting} className="w-full">
+      <Button type="submit" loading={requesting} className="w-full">
         {requesting ? "Sending code…" : "Send reset code"}
       </Button>
     </form>

@@ -5,6 +5,7 @@ import { getOrderById, getOrderEvents, getSlipSignedUrl } from "@/lib/data/order
 import { getActiveBankAccounts } from "@/lib/data/settings";
 import { OrderTimeline } from "@/components/orders/order-timeline";
 import { OrderTrackingLive } from "@/components/orders/order-tracking-live";
+import { Celebrate } from "@/components/orders/celebrate";
 import { SlipUpload } from "@/components/orders/slip-upload";
 import { Alert } from "@/components/ui/alert";
 import { OrderStatusPill } from "@/components/ui/status-pill";
@@ -63,6 +64,7 @@ export default async function OrderDetailPage({
         <ArrowLeft className="h-4 w-4" /> All orders
       </Link>
 
+      {placed && <Celebrate />}
       {placed && (
         <Alert variant="success">
           Order placed!{" "}

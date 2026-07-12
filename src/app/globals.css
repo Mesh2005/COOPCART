@@ -337,6 +337,20 @@
   animation: marquee 18s linear infinite;
 }
 
+/* Toast auto-dismiss countdown bar */
+@keyframes toast-progress {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0);
+  }
+}
+.toast-progress {
+  transform-origin: left;
+  animation: toast-progress 5s linear forwards;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   ::before,

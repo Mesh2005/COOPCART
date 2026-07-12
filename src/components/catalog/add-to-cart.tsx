@@ -56,11 +56,13 @@ export function AddToCart({
           <p className="text-sm font-semibold text-brown-900">{formatLKR(unit * qty)}</p>
         </div>
       </div>
-      <Button type="button" onClick={submit} disabled={pending} className="w-full">
+      <Button type="button" onClick={submit} loading={pending} className="w-full">
         {done ? (
           <>
             <Check className="h-4 w-4" /> {inCart ? "Updated" : "Added"}
           </>
+        ) : pending ? (
+          inCart ? "Updating…" : "Adding…"
         ) : (
           <>
             <ShoppingCart className="h-4 w-4" /> {inCart ? "Update cart" : "Add to cart"}
