@@ -5,6 +5,7 @@ import { LogoutButton } from "@/components/dashboard/logout-button";
 import { PageTransition } from "@/components/ui/page-transition";
 import { Logo } from "@/components/brand/logo";
 import { NotificationBell } from "@/components/notifications/notification-bell";
+import { CommandPalette, CommandTrigger } from "@/components/admin/command-palette";
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const profile = await requireStaff();
@@ -26,7 +27,8 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             <p className="text-sm font-semibold text-brown-900">{profile.full_name ?? "Staff"}</p>
             <p className="text-xs capitalize text-muted">{profile.role}</p>
           </div>
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-2">
+            <CommandTrigger />
             <NotificationBell />
             <LogoutButton redirectTo="/admin/login" />
           </div>
@@ -40,6 +42,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           <PageTransition>{children}</PageTransition>
         </main>
       </div>
+      <CommandPalette />
     </div>
   );
 }
