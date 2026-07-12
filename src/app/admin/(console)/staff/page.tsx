@@ -3,6 +3,7 @@ import { getStaffList } from "@/lib/data/admin/staff";
 import { PageHeader } from "@/components/admin/page-header";
 import { StaffTable } from "@/components/admin/staff-table";
 import { InviteFormClient } from "@/components/admin/invite-form";
+import { EmptyState } from "@/components/ui/empty-state";
 
 export default async function AdminStaffPage() {
   const staff = await getStaffList();
@@ -15,11 +16,11 @@ export default async function AdminStaffPage() {
       />
 
       {staff.length === 0 ? (
-        <div className="rounded-2xl border border-line bg-surface p-8 text-center text-muted">
-          <UserCog className="mx-auto h-10 w-10 text-brown-200" />
-          <p className="mt-3">No staff members yet.</p>
-          <p className="mt-1 text-sm">Invite your first team member below.</p>
-        </div>
+        <EmptyState
+          icon={UserCog}
+          title="No staff members yet"
+          description="Add your first team member using the form below."
+        />
       ) : (
         <StaffTable staff={staff} />
       )}

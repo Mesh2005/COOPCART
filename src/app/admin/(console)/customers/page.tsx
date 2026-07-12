@@ -2,6 +2,7 @@ import { Users } from "lucide-react";
 import { getCustomers } from "@/lib/data/admin/customers";
 import { PageHeader } from "@/components/admin/page-header";
 import { CustomerTable } from "@/components/admin/customer-table";
+import { EmptyState } from "@/components/ui/empty-state";
 
 export default async function AdminCustomersPage({
   searchParams,
@@ -53,10 +54,7 @@ export default async function AdminCustomersPage({
       </div>
 
       {customers.length === 0 ? (
-        <div className="rounded-2xl border border-line bg-surface p-8 text-center text-muted">
-          <Users className="mx-auto h-10 w-10 text-brown-200" />
-          <p className="mt-3">No customers found.</p>
-        </div>
+        <EmptyState icon={Users} title="No customers found" description="New business registrations will appear here for approval." />
       ) : (
         <CustomerTable customers={customers} />
       )}

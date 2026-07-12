@@ -1,25 +1,22 @@
 import Link from "next/link";
 import { ClipboardList } from "lucide-react";
 import { getMyOrders } from "@/lib/data/orders";
-import { buttonVariants } from "@/components/ui/button";
 import { OrderStatusPill } from "@/components/ui/status-pill";
 import { OrderMiniProgress } from "@/components/orders/order-mini-progress";
+import { EmptyState } from "@/components/ui/empty-state";
 import { formatDate, formatLKR } from "@/lib/format";
-import { cn } from "@/lib/utils";
 
 export default async function OrdersPage() {
   const orders = await getMyOrders();
 
   if (orders.length === 0) {
     return (
-      <div className="rounded-3xl border border-line bg-surface p-12 text-center">
-        <ClipboardList className="mx-auto h-10 w-10 text-brown-300" />
-        <p className="mt-4 font-semibold text-brown-900">No orders yet</p>
-        <p className="mt-1 text-sm text-muted">When you place an order, it’ll show up here.</p>
-        <Link href="/app/catalog" className={cn(buttonVariants(), "mt-6")}>
-          Browse catalogue
-        </Link>
-      </div>
+      <EmptyState
+        icon={ClipboardList}
+        title="No orders yet"
+        description="When you place an order, it’ll show up here with live tracking."
+        action={{ label: "Browse catalogue", href: "/app/catalog" }}
+      />
     );
   }
 

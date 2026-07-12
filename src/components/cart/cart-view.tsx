@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { ArrowRight, ShoppingCart, Trash2 } from "lucide-react";
 import { QuantityStepper } from "@/components/ui/quantity-stepper";
 import { buttonVariants } from "@/components/ui/button";
+import { EmptyState } from "@/components/ui/empty-state";
 import { Alert } from "@/components/ui/alert";
 import { removeFromCart, setCartQty } from "@/lib/actions/cart";
 import { unitPriceForQty } from "@/lib/pricing";
@@ -51,14 +52,12 @@ export function CartView({ initialLines, minOrder }: { initialLines: CartLine[];
 
   if (lines.length === 0) {
     return (
-      <div className="rounded-3xl border border-line bg-surface p-12 text-center">
-        <ShoppingCart className="mx-auto h-10 w-10 text-brown-300" />
-        <p className="mt-4 font-semibold text-brown-900">Your cart is empty</p>
-        <p className="mt-1 text-sm text-muted">Add some trays from the catalogue to get started.</p>
-        <Link href="/app/catalog" className={cn(buttonVariants(), "mt-6")}>
-          Browse catalogue
-        </Link>
-      </div>
+      <EmptyState
+        icon={ShoppingCart}
+        title="Your cart is empty"
+        description="Add some trays from the catalogue to get started."
+        action={{ label: "Browse catalogue", href: "/app/catalog" }}
+      />
     );
   }
 

@@ -3,6 +3,7 @@ import { Wallet, ArrowRight } from "lucide-react";
 import { getMyOrders } from "@/lib/data/orders";
 import { buttonVariants } from "@/components/ui/button";
 import { PaymentStatusPill } from "@/components/ui/status-pill";
+import { EmptyState } from "@/components/ui/empty-state";
 import { formatDate, formatLKR } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
@@ -16,16 +17,12 @@ export default async function PaymentsPage() {
 
   if (payable.length === 0) {
     return (
-      <div className="rounded-3xl border border-line bg-surface p-12 text-center">
-        <Wallet className="mx-auto h-10 w-10 text-brown-300" />
-        <p className="mt-4 font-semibold text-brown-900">No payments yet</p>
-        <p className="mt-1 text-sm text-muted">
-          Payments appear here once you place an order.
-        </p>
-        <Link href="/app/catalog" className={cn(buttonVariants(), "mt-6")}>
-          Browse catalogue
-        </Link>
-      </div>
+      <EmptyState
+        icon={Wallet}
+        title="No payments yet"
+        description="Payments appear here once you place an order."
+        action={{ label: "Browse catalogue", href: "/app/catalog" }}
+      />
     );
   }
 
