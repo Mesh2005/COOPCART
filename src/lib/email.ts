@@ -75,39 +75,107 @@ async function sendEmail(to: string, subject: string, html: string): Promise<Sen
   return { delivered: false };
 }
 
-// --- shared branded shell ---------------------------------------------------
-function shell(heading: string, body: string): string {
-  return `
-  <div style="font-family:system-ui,-apple-system,sans-serif;max-width:520px;margin:0 auto;padding:24px;color:#2a231d">
-    <div style="margin-bottom:16px">
-      <span style="font-size:18px;font-weight:700;color:#6f4a2e">CoopCart</span>
-      <span style="font-size:12px;color:#8a7b6c"> · Abeyrathna Farms</span>
-    </div>
-    <h1 style="font-size:20px;color:#6f4a2e;margin:0 0 12px">${heading}</h1>
-    ${body}
-    <p style="margin:24px 0 0;color:#b0a396;font-size:12px;border-top:1px solid #eae0d2;padding-top:12px">
-      Abeyrathna Farms · Kuliyapitiya, Sri Lanka · 074 192 3702
-    </p>
-  </div>`;
+// --- shared branded template ------------------------------------------------
+// Email-client-safe: table layout, inline styles, web-safe fonts, a preheader
+// for the inbox preview, and a bulletproof button.
+
+function shell(heading: string, bodyHtml: string, preheader = ""): string {
+  return `<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <meta name="x-apple-disable-message-reformatting">
+</head>
+<body style="margin:0;padding:0;background:#f4ece0;">
+  ${preheader ? `<div style="display:none;max-height:0;overflow:hidden;opacity:0;color:transparent;height:0;width:0;">${preheader}</div>` : ""}
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f4ece0;">
+    <tr>
+      <td align="center" style="padding:28px 14px;">
+        <table role="presentation" width="560" cellpadding="0" cellspacing="0" border="0" style="width:560px;max-width:560px;background:#ffffff;border-radius:18px;overflow:hidden;border:1px solid #ece1d1;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+          <tr>
+            <td style="background:#5b3a24;padding:22px 32px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td style="font-size:20px;font-weight:700;color:#fbf3e7;letter-spacing:.2px;">
+                    <span style="font-size:22px;">🥚</span>&nbsp;CoopCart
+                  </td>
+                  <td align="right" style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#d9b892;">
+                    Abeyrathna&nbsp;Farms
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          <tr><td style="height:4px;line-height:4px;font-size:0;background:#e6a23c;">&nbsp;</td></tr>
+          <tr>
+            <td style="padding:34px 32px 30px;color:#2a231d;">
+              <h1 style="margin:0 0 16px;font-size:22px;line-height:1.3;color:#3d2a1c;font-weight:700;">${heading}</h1>
+              ${bodyHtml}
+            </td>
+          </tr>
+          <tr>
+            <td style="background:#faf3e7;padding:20px 32px;border-top:1px solid #ece1d1;">
+              <p style="margin:0;font-size:12px;line-height:1.7;color:#9b8b7b;">
+                <b style="color:#6f4a2e;">Abeyrathna Farms</b><br>
+                Kuliyapitiya, Sri Lanka &middot; <a href="tel:+94741923702" style="color:#9b8b7b;text-decoration:none;">074 192 3702</a>
+              </p>
+              <p style="margin:10px 0 0;font-size:11px;color:#b7a898;">Wholesale farm-fresh eggs, delivered on schedule.</p>
+            </td>
+          </tr>
+        </table>
+        <p style="margin:16px 0 0;font-size:11px;color:#b7a898;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">You're receiving this because you have a CoopCart account.</p>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`;
+}
+
+function p(text: string): string {
+  return `<p style="margin:0 0 18px;font-size:15px;line-height:1.65;color:#6b5d4f;">${text}</p>`;
 }
 
 function button(href: string, label: string): string {
-  return `<a href="${href}" style="display:inline-block;background:#6f4a2e;color:#fbf7f0;text-decoration:none;padding:10px 18px;border-radius:9999px;font-size:14px;font-weight:600">${label}</a>`;
+  return `<table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>
+    <td style="border-radius:9999px;background:#6f4a2e;">
+      <a href="${href}" style="display:inline-block;padding:13px 28px;font-size:14px;font-weight:600;color:#fbf7f0;text-decoration:none;border-radius:9999px;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">${label}&nbsp;&rarr;</a>
+    </td>
+  </tr></table>`;
+}
+
+function codeBlock(code: string): string {
+  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
+    <td align="center" style="background:#faf3e7;border:1px solid #ece1d1;border-radius:14px;padding:24px;">
+      <div style="font-size:36px;font-weight:700;letter-spacing:12px;text-indent:12px;color:#3d2a1c;font-family:'Courier New',Courier,monospace;">${code}</div>
+    </td>
+  </tr></table>`;
 }
 
 // --- OTP (signup + password reset) ------------------------------------------
 export async function sendOtpEmail(to: string, code: string): Promise<SendResult> {
   const body = `
-    <p style="margin:0 0 16px;color:#8a7b6c">Use this code to finish creating your CoopCart wholesale account. It expires in 10 minutes.</p>
-    <div style="font-size:34px;font-weight:700;letter-spacing:10px;color:#2a1d14;background:#faf3e7;border:1px solid #eae0d2;border-radius:12px;padding:16px;text-align:center">${code}</div>`;
-  return sendEmail(to, `Your CoopCart verification code: ${code}`, shell("Verify your email", body));
+    ${p("Welcome! Use the code below to verify your email and finish setting up your CoopCart wholesale account.")}
+    ${codeBlock(code)}
+    <p style="margin:16px 0 0;font-size:13px;color:#9b8b7b;">This code expires in 10 minutes. If you didn't request it, you can safely ignore this email.</p>`;
+  return sendEmail(
+    to,
+    `Your CoopCart verification code: ${code}`,
+    shell("Verify your email", body, `Your verification code is ${code}`),
+  );
 }
 
 export async function sendPasswordResetOtpEmail(to: string, code: string): Promise<SendResult> {
   const body = `
-    <p style="margin:0 0 16px;color:#8a7b6c">Use this code to reset your CoopCart password. It expires in 10 minutes. If you didn't request this, ignore this email.</p>
-    <div style="font-size:34px;font-weight:700;letter-spacing:10px;color:#2a1d14;background:#faf3e7;border:1px solid #eae0d2;border-radius:12px;padding:16px;text-align:center">${code}</div>`;
-  return sendEmail(to, `Your CoopCart password reset code: ${code}`, shell("Reset your password", body));
+    ${p("We received a request to reset your CoopCart password. Enter this code to choose a new one.")}
+    ${codeBlock(code)}
+    <p style="margin:16px 0 0;font-size:13px;color:#9b8b7b;">This code expires in 10 minutes. If you didn't request a reset, ignore this email — your password stays the same.</p>`;
+  return sendEmail(
+    to,
+    `Your CoopCart password reset code: ${code}`,
+    shell("Reset your password", body, `Your password reset code is ${code}`),
+  );
 }
 
 // --- transactional order emails ---------------------------------------------
@@ -115,18 +183,30 @@ export async function sendOrderConfirmationEmail(
   to: string,
   o: { id: string; orderNumber: string; total: number; fulfillment: string; date: string | null; paymentMethod: string },
 ): Promise<SendResult> {
-  const row = (k: string, v: string, top = false) =>
-    `<tr><td style="padding:6px 0;color:#8a7b6c${top ? ";border-top:1px solid #eae0d2" : ""}">${k}</td><td style="text-align:right;font-weight:600${top ? ";border-top:1px solid #eae0d2" : ""}">${v}</td></tr>`;
+  const row = (k: string, v: string) =>
+    `<tr>
+      <td style="padding:10px 0;font-size:14px;color:#8a7b6c;">${k}</td>
+      <td style="padding:10px 0;font-size:14px;font-weight:600;color:#2a231d;text-align:right;">${v}</td>
+    </tr>`;
   const body = `
-    <p style="margin:0 0 16px;color:#8a7b6c">Thanks for your order — we've received it and will confirm it shortly.</p>
-    <table style="width:100%;font-size:14px;border-collapse:collapse">
-      ${row("Order", o.orderNumber)}
-      ${row(o.fulfillment === "delivery" ? "Delivery date" : "Pickup date", o.date ? formatDate(o.date) : "—")}
-      ${row("Payment", o.paymentMethod === "cod" ? "Cash on delivery" : "Bank transfer")}
-      ${row("Total", formatLKR(o.total), true)}
-    </table>
-    <p style="margin:22px 0 0">${button(`${SITE_URL}/app/orders/${o.id}`, "View order")}</p>`;
-  return sendEmail(to, `Order ${o.orderNumber} received · CoopCart`, shell("Order received", body));
+    ${p("Thanks for your order — we've received it and will confirm it shortly. Here's a summary:")}
+    <div style="background:#faf3e7;border:1px solid #ece1d1;border-radius:14px;padding:4px 20px;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+        ${row("Order number", o.orderNumber)}
+        ${row(o.fulfillment === "delivery" ? "Delivery date" : "Pickup date", o.date ? formatDate(o.date) : "To be scheduled")}
+        ${row("Payment", o.paymentMethod === "cod" ? "Cash on delivery" : "Bank transfer")}
+        <tr>
+          <td style="padding:14px 0 12px;font-size:15px;font-weight:700;color:#3d2a1c;border-top:1px solid #ece1d1;">Total</td>
+          <td style="padding:14px 0 12px;font-size:18px;font-weight:700;color:#6f4a2e;text-align:right;border-top:1px solid #ece1d1;">${formatLKR(o.total)}</td>
+        </tr>
+      </table>
+    </div>
+    <div style="margin-top:24px;">${button(`${SITE_URL}/app/orders/${o.id}`, "View your order")}</div>`;
+  return sendEmail(
+    to,
+    `Order ${o.orderNumber} received · CoopCart`,
+    shell("We've got your order", body, `Order ${o.orderNumber} received — total ${formatLKR(o.total)}`),
+  );
 }
 
 export async function sendOrderStatusEmail(
@@ -135,9 +215,16 @@ export async function sendOrderStatusEmail(
 ): Promise<SendResult> {
   const label = o.status.replace(/_/g, " ");
   const body = `
-    <p style="margin:0 0 16px;color:#8a7b6c">Your order <b>${o.orderNumber}</b> is now <b style="color:#2a1d14">${label}</b>.</p>
-    <p style="margin:12px 0 0">${button(`${SITE_URL}/app/orders/${o.id}`, "Track order")}</p>`;
-  return sendEmail(to, `Order ${o.orderNumber} is ${label} · CoopCart`, shell("Order update", body));
+    ${p(`Good news — there's an update on your order <b style="color:#2a231d;">${o.orderNumber}</b>.`)}
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 22px;"><tr>
+      <td style="background:#e9f2e5;border-radius:9999px;padding:8px 16px;font-size:13px;font-weight:700;text-transform:capitalize;letter-spacing:.3px;color:#3f6b34;">${label}</td>
+    </tr></table>
+    <div>${button(`${SITE_URL}/app/orders/${o.id}`, "Track your order")}</div>`;
+  return sendEmail(
+    to,
+    `Order ${o.orderNumber} is ${label} · CoopCart`,
+    shell("Order update", body, `${o.orderNumber} is now ${label}`),
+  );
 }
 
 export async function sendPaymentVerifiedEmail(
@@ -145,7 +232,14 @@ export async function sendPaymentVerifiedEmail(
   o: { id: string; orderNumber: string },
 ): Promise<SendResult> {
   const body = `
-    <p style="margin:0 0 16px;color:#8a7b6c">We've verified your payment for order <b>${o.orderNumber}</b>. Thank you!</p>
-    <p style="margin:12px 0 0">${button(`${SITE_URL}/app/orders/${o.id}`, "View order")}</p>`;
-  return sendEmail(to, `Payment verified for ${o.orderNumber} · CoopCart`, shell("Payment verified", body));
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 18px;"><tr>
+      <td style="width:44px;height:44px;background:#e9f2e5;border-radius:9999px;text-align:center;font-size:22px;line-height:44px;">✓</td>
+    </tr></table>
+    ${p(`We've verified your payment for order <b style="color:#2a231d;">${o.orderNumber}</b>. It's all set — thank you!`)}
+    <div>${button(`${SITE_URL}/app/orders/${o.id}`, "View your order")}</div>`;
+  return sendEmail(
+    to,
+    `Payment verified for ${o.orderNumber} · CoopCart`,
+    shell("Payment verified", body, `Payment verified for ${o.orderNumber}`),
+  );
 }
