@@ -1,18 +1,55 @@
 import "server-only";
+import nodemailer, { type Transporter } from "nodemailer";
 import { SITE_URL } from "@/lib/env";
 import { formatLKR, formatDate } from "@/lib/format";
 
-const RESEND_API_KEY = process.env.RESEND_API_KEY;
-// Resend's shared sender works out of the box for testing; swap for your own
-// verified domain (e.g. no-reply@abeyrathnafarms.lk) once DNS is set up.
-const FROM = process.env.EMAIL_FROM || "CoopCart <onboarding@resend.dev>";
+// --- provider config --------------------------------------------------------
+// SMTP (e.g. Gmail) takes priority: set SMTP_USER + SMTP_PASS (a Google App
+// Password) to email real recipients without verifying a domain. Falls back to
+// Resend when SMTP isn't configured.
+const SMTP_USER = process.env.SMTP_USER;
+const SMTP_PASS = process.env.SMTP_PASS;
+const SMTP_HOST = process.env.SMTP_HOST || "smtp.gmail.com";
+const SMTP_PORT = Number(process.env.SMTP_PORT || 465);
+const hasSmtp = Boolean(SMTP_USER && SMTP_PASS);
 
-export const hasEmailProvider = Boolean(RESEND_API_KEY);
+const RESEND_API_KEY = process.env.RESEND_API_KEY;
+
+// From address. An explicit EMAIL_FROM wins; otherwise use the SMTP mailbox
+// (Gmail requires the From to match the authenticated account), else the
+// Resend test sender.
+const FROM =
+  process.env.EMAIL_FROM ||
+  (hasSmtp ? `Abeyrathna Farms <${SMTP_USER}>` : "CoopCart <onboarding@resend.dev>");
+
+export const hasEmailProvider = hasSmtp || Boolean(RESEND_API_KEY);
 
 type SendResult = { delivered: boolean; error?: string };
 
-async function sendEmail(to: string, subject: string, html: string): Promise<SendResult> {
-  if (!RESEND_API_KEY) return { delivered: false };
+// Reuse one SMTP transport across invocations in a warm server.
+let transporter: Transporter | null = null;
+function getTransporter(): Transporter {
+  if (!transporter) {
+    transporter = nodemailer.createTransport({
+      host: SMTP_HOST,
+      port: SMTP_PORT,
+      secure: SMTP_PORT === 465, // 465 = implicit TLS, 587 = STARTTLS
+      auth: { user: SMTP_USER, pass: SMTP_PASS },
+    });
+  }
+  return transporter;
+}
+
+async function sendViaSmtp(to: string, subject: string, html: string): Promise<SendResult> {
+  try {
+    await getTransporter().sendMail({ from: FROM, to, subject, html });
+    return { delivered: true };
+  } catch (err) {
+    return { delivered: false, error: `SMTP: ${(err as Error).message}` };
+  }
+}
+
+async function sendViaResend(to: string, subject: string, html: string): Promise<SendResult> {
   try {
     const res = await fetch("https://api.resend.com/emails", {
       method: "POST",
@@ -30,6 +67,12 @@ async function sendEmail(to: string, subject: string, html: string): Promise<Sen
   } catch (err) {
     return { delivered: false, error: (err as Error).message };
   }
+}
+
+async function sendEmail(to: string, subject: string, html: string): Promise<SendResult> {
+  if (hasSmtp) return sendViaSmtp(to, subject, html);
+  if (RESEND_API_KEY) return sendViaResend(to, subject, html);
+  return { delivered: false };
 }
 
 // --- shared branded shell ---------------------------------------------------
