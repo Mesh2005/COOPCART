@@ -6,6 +6,7 @@ import { getActiveBankAccounts } from "@/lib/data/settings";
 import { OrderTimeline } from "@/components/orders/order-timeline";
 import { OrderTrackingLive } from "@/components/orders/order-tracking-live";
 import { Celebrate } from "@/components/orders/celebrate";
+import { FarmMap } from "@/components/orders/farm-map";
 import { SlipUpload } from "@/components/orders/slip-upload";
 import { Alert } from "@/components/ui/alert";
 import { OrderStatusPill } from "@/components/ui/status-pill";
@@ -145,6 +146,12 @@ export default async function OrderDetailPage({
           </dl>
         </div>
       </div>
+
+      {order.status !== "cancelled" && (
+        <FarmMap
+          label={isDelivery ? "Delivering from Abeyrathna Farms" : "Collect from Abeyrathna Farms"}
+        />
+      )}
 
       <div className="rounded-2xl border border-line bg-surface p-5">
         <h2 className="font-display text-lg font-semibold text-brown-900">Items</h2>

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+import { fireConfetti } from "@/lib/confetti";
 import { cn } from "@/lib/utils";
 
 /**
@@ -21,7 +22,11 @@ export function OrderTrackingLive({ orderId }: { orderId: string }) {
       .on(
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "order_events", filter: `order_id=eq.${orderId}` },
-        () => router.refresh(),
+        (payload) => {
+          const status = (payload.new as { status?: string }).status;
+          if (status === "delivered" || status === "completed") fireConfetti();
+          router.refresh();
+        },
       )
       .on(
         "postgres_changes",

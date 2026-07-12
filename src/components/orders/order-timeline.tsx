@@ -73,7 +73,7 @@ export function OrderTimeline({
                       : "border border-line bg-surface text-muted",
                 )}
               >
-                {done ? <Check className="h-4 w-4" /> : i + 1}
+                {done ? <Check className="h-4 w-4 animate-scale-in" /> : i + 1}
               </span>
               {!last && (
                 <span
