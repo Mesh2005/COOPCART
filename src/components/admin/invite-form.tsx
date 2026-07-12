@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
-import { inviteStaffAction } from "@/lib/actions/admin/staff";
+import { addStaffAction } from "@/lib/actions/admin/staff";
 import { initialActionState } from "@/lib/actions/state";
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
@@ -19,16 +19,23 @@ const ROLE_LABELS: Record<string, string> = {
 };
 
 export function InviteFormClient() {
-  const [state, action, pending] = useActionState(
-    inviteStaffAction,
-    initialActionState,
-  );
+  const [state, action, pending] = useActionState(addStaffAction, initialActionState);
 
   return (
     <form action={action} className="grid gap-4 sm:grid-cols-2">
       {state.success && (
         <Alert variant="success" className="sm:col-span-2">
-          {state.success}
+          <p>{state.success}</p>
+          {state.createdEmail && state.tempPassword && (
+            <div className="mt-2 rounded-lg border border-line bg-surface px-3 py-2 font-mono text-sm text-brown-900">
+              <div>Email: {state.createdEmail}</div>
+              <div>Temp password: {state.tempPassword}</div>
+              <p className="mt-1 font-sans text-xs text-muted">
+                Share these with the staff member. They sign in at /admin and can change the
+                password later via “Forgot password”.
+              </p>
+            </div>
+          )}
         </Alert>
       )}
       {state.error && (
@@ -43,8 +50,8 @@ export function InviteFormClient() {
         <Input id="email" name="email" type="email" required />
       </Field>
       <Field label="Role" htmlFor="role" required>
-        <Select id="role" name="role" required>
-          {STAFF_ROLES.filter((r) => r !== "admin").map((r) => (
+        <Select id="role" name="role" required defaultValue="manager">
+          {STAFF_ROLES.map((r) => (
             <option key={r} value={r}>
               {ROLE_LABELS[r]}
             </option>
@@ -53,7 +60,7 @@ export function InviteFormClient() {
       </Field>
       <div className="flex items-end">
         <Button type="submit" disabled={pending} className="w-full sm:w-auto">
-          {pending ? "Sending…" : "Send invitation"}
+          {pending ? "Adding…" : "Add staff member"}
         </Button>
       </div>
     </form>

@@ -26,7 +26,7 @@ export default async function AdminStaffPage() {
 
       <div className="rounded-2xl border border-line bg-surface p-6">
         <h2 className="mb-4 font-display text-lg font-semibold text-brown-900">
-          Invite staff member
+          Add staff member
         </h2>
         <InviteFormClient />
       </div>
