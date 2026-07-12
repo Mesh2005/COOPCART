@@ -4,6 +4,7 @@ import {
   BarChart3,
   Boxes,
   ClipboardList,
+  Clock,
   Egg,
   PackageX,
   ShieldCheck,
@@ -16,7 +17,10 @@ import { requireStaff } from "@/lib/auth";
 import { getCustomers } from "@/lib/data/admin/customers";
 import { getAllPayments } from "@/lib/data/admin/payments";
 import { getInventory } from "@/lib/data/admin/inventory";
+import { getReportData } from "@/lib/data/admin/reports";
 import { AuroraBackground } from "@/components/ui/aurora-background";
+import { KpiCard } from "@/components/admin/kpi-card";
+import { formatLKR } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
 const modules = [
@@ -34,12 +38,30 @@ export default async function AdminOverview() {
   const profile = await requireStaff();
   const firstName = profile.full_name?.split(" ")[0];
 
-  const [pendingCustomers, pendingSlips, inventory] = await Promise.all([
+  const [pendingCustomers, pendingSlips, inventory, report] = await Promise.all([
     getCustomers("pending"),
     getAllPayments("slip_uploaded"),
     getInventory(),
+    getReportData(14),
   ]);
   const lowStock = inventory.filter((i) => i.is_active && i.is_low);
+
+  // Build a continuous 14-day series (fill gaps), split into this week / last week.
+  const dayKey = (offset: number) =>
+    new Date(Date.now() - offset * 86400_000).toISOString().split("T")[0];
+  const byDate = new Map(report.daily.map((d) => [d.date, d]));
+  const series = Array.from(
+    { length: 14 },
+    (_, i) => byDate.get(dayKey(13 - i)) ?? { date: dayKey(13 - i), revenue: 0, orders: 0 },
+  );
+  const last7 = series.slice(7);
+  const prev7 = series.slice(0, 7);
+  const sumBy = (arr: { revenue: number; orders: number }[], k: "revenue" | "orders") =>
+    arr.reduce((s, d) => s + d[k], 0);
+  const pct = (cur: number, prev: number) =>
+    prev > 0 ? ((cur - prev) / prev) * 100 : cur > 0 ? 100 : 0;
+  const revThis = sumBy(last7, "revenue");
+  const ordThis = sumBy(last7, "orders");
 
   return (
     <div className="space-y-6">
@@ -51,6 +73,39 @@ export default async function AdminOverview() {
             Welcome{firstName ? `, ${firstName}` : ""}. Manage the CoopCart wholesale operation from here.
           </p>
         </div>
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <KpiCard
+          label="Revenue · 7 days"
+          value={formatLKR(revThis)}
+          icon={Wallet}
+          trend={pct(revThis, sumBy(prev7, "revenue"))}
+          spark={last7.map((d) => d.revenue)}
+          accent="text-sage-600"
+        />
+        <KpiCard
+          label="Orders · 7 days"
+          value={String(ordThis)}
+          icon={ClipboardList}
+          trend={pct(ordThis, sumBy(prev7, "orders"))}
+          spark={last7.map((d) => d.orders)}
+          accent="text-blue-500"
+        />
+        <KpiCard
+          label="Avg order value"
+          value={formatLKR(report.avgOrderValue)}
+          sub="last 14 days"
+          icon={Egg}
+          accent="text-yolk-500"
+        />
+        <KpiCard
+          label="Pending orders"
+          value={String(report.pendingOrders)}
+          sub={`${report.pendingPayments} slip${report.pendingPayments !== 1 ? "s" : ""} to verify`}
+          icon={Clock}
+          accent="text-[#d9833f]"
+        />
       </div>
 
       {(pendingCustomers.length > 0 || pendingSlips.length > 0 || lowStock.length > 0) && (
