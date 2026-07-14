@@ -4,7 +4,7 @@ import { AuroraBackground } from "@/components/ui/aurora-background";
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="relative min-h-dvh bg-cream">
+    <div className="relative min-h-dvh bg-brown-50">
       <AuroraBackground variant="warm" />
       <div className="bg-grain pointer-events-none absolute inset-0 opacity-50" />
       <div className="relative mx-auto flex min-h-dvh w-full max-w-md flex-col justify-center px-5 py-12">

@@ -91,9 +91,9 @@ export function NavLinks({
               dark
                 ? active
                   ? "bg-white/15 text-cream"
-                  : "text-brown-100/80 hover:bg-white/10 hover:text-cream"
+                  : "text-cream/80 hover:bg-white/10 hover:text-cream"
                 : active
-                  ? "bg-brown-600 text-cream shadow-sm"
+                  ? "bg-[#6f4a2e] text-cream shadow-sm"
                   : "text-brown-700 hover:bg-brown-50",
             )}
           >

@@ -20,7 +20,7 @@ export function SlipUpload({ orderId }: { orderId: string }) {
         name="slip"
         accept="image/*,application/pdf"
         required
-        className="block w-full text-sm text-brown-800 file:mr-3 file:rounded-full file:border-0 file:bg-brown-600 file:px-4 file:py-2 file:text-sm file:font-medium file:text-cream hover:file:bg-brown-700"
+        className="block w-full text-sm text-brown-800 file:mr-3 file:rounded-full file:border-0 file:bg-[#6f4a2e] file:px-4 file:py-2 file:text-sm file:font-medium file:text-cream hover:file:bg-[#573a26]"
       />
       <Button type="submit" disabled={pending}>
         {pending ? (

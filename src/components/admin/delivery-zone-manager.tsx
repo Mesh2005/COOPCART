@@ -33,7 +33,7 @@ function ZoneForm({ zone }: { zone?: DeliveryZone }) {
 
   if (!open && zone) {
     return (
-      <div className="flex items-center justify-between rounded-xl border border-line bg-cream/40 px-4 py-3">
+      <div className="flex items-center justify-between rounded-xl border border-line bg-brown-50/40 px-4 py-3">
         <div>
           <span className="font-medium text-brown-900">{zone.name}</span>
           <span className="ml-2 text-sm text-muted">
@@ -51,7 +51,7 @@ function ZoneForm({ zone }: { zone?: DeliveryZone }) {
   }
 
   return (
-    <form action={action} className="rounded-xl border border-line bg-cream/40 p-4 space-y-3">
+    <form action={action} className="rounded-xl border border-line bg-brown-50/40 p-4 space-y-3">
       {zone && <input type="hidden" name="id" value={zone.id} />}
       {state.success && <Alert variant="success">{state.success}</Alert>}
       {state.error && <Alert variant="error">{state.error}</Alert>}
@@ -182,7 +182,7 @@ export function DeliveryZoneManager({
           {blackouts.map((b) => (
             <li
               key={b.id}
-              className="flex items-center justify-between rounded-lg border border-line bg-cream/40 px-3 py-2 text-sm"
+              className="flex items-center justify-between rounded-lg border border-line bg-brown-50/40 px-3 py-2 text-sm"
             >
               <span className="font-medium text-brown-900">{b.date}</span>
               {b.reason && <span className="text-muted">{b.reason}</span>}

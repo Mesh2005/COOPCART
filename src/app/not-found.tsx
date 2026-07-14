@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 
 export default function NotFound() {
   return (
-    <main className="relative flex min-h-dvh flex-col items-center justify-center overflow-hidden bg-cream px-6 text-center">
+    <main className="relative flex min-h-dvh flex-col items-center justify-center overflow-hidden bg-brown-50 px-6 text-center">
       <div className="glow-warm pointer-events-none absolute inset-x-0 top-0 h-80" />
       <div className="bg-grain pointer-events-none absolute inset-0 opacity-60" />
 

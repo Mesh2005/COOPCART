@@ -65,7 +65,7 @@ export default async function AdminOverview() {
 
   return (
     <div className="space-y-6">
-      <div className="animate-scale-in relative overflow-hidden rounded-3xl bg-gradient-to-br from-brown-700 via-brown-800 to-brown-900 p-6 text-cream shadow-lg sm:p-8">
+      <div className="animate-scale-in relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#573a26] via-[#3d2a1c] to-[#2a1d14] p-6 text-cream shadow-lg sm:p-8">
         <AuroraBackground variant="dark" className="opacity-70" />
         <div className="relative">
           <h1 className="font-display text-2xl font-semibold sm:text-3xl">Admin overview</h1>

@@ -13,7 +13,7 @@ export default async function CustomerDashboard() {
 
   return (
     <div className="mx-auto max-w-5xl space-y-6">
-      <div className="animate-scale-in relative overflow-hidden rounded-3xl bg-gradient-to-br from-brown-600 via-brown-700 to-brown-900 p-6 text-cream shadow-lg sm:p-8">
+      <div className="animate-scale-in relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#6f4a2e] via-[#573a26] to-[#2a1d14] p-6 text-cream shadow-lg sm:p-8">
         <AuroraBackground variant="dark" className="opacity-70" />
         <div className="relative">
           <h1 className="font-display text-2xl font-semibold sm:text-3xl">

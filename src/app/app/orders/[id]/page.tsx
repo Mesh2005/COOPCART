@@ -186,7 +186,7 @@ export default async function OrderDetailPage({
           ) : (
             <>
               {bank && (
-                <div className="mt-3 rounded-xl border border-line bg-cream/50 p-4 text-sm">
+                <div className="mt-3 rounded-xl border border-line bg-brown-50/50 p-4 text-sm">
                   <dl className="space-y-1">
                     <Row k="Account name" v={bank.account_name} />
                     <Row k="Bank" v={bank.bank_name} />

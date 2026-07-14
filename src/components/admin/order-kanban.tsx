@@ -67,7 +67,7 @@ function OrderCard({
       }}
       onDragEnd={onDragEnd}
       className={cn(
-        "group rounded-xl border border-line bg-white p-3 shadow-sm transition-opacity",
+        "group rounded-xl border border-line bg-surface p-3 shadow-sm transition-opacity",
         draggable && "cursor-grab active:cursor-grabbing",
         dragging && "opacity-40",
       )}
@@ -191,7 +191,7 @@ export function OrderKanban({ orders }: { orders: AdminOrderRow[] }) {
               >
                 <div className="mb-3 flex items-center justify-between">
                   <h3 className="text-sm font-semibold text-brown-900">{col.label}</h3>
-                  <span className="rounded-full bg-white px-2 py-0.5 text-xs font-semibold text-muted">
+                  <span className="rounded-full bg-surface px-2 py-0.5 text-xs font-semibold text-muted">
                     {colOrders.length}
                   </span>
                 </div>

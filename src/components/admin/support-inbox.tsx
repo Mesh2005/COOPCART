@@ -156,7 +156,7 @@ export function SupportInbox() {
       <section className={cn("flex-col", activeId ? "flex" : "hidden md:flex")}>
         {!active ? (
           <div className="flex flex-1 flex-col items-center justify-center gap-2 text-muted">
-            <MessageSquare className="h-8 w-8 text-brown-200" />
+            <MessageSquare className="h-8 w-8 text-brown-400" />
             <p className="text-sm">Select a conversation to reply.</p>
           </div>
         ) : (
@@ -177,7 +177,7 @@ export function SupportInbox() {
                   className={cn(
                     "max-w-[80%] rounded-2xl px-3.5 py-2 text-sm",
                     m.sender_role === "staff"
-                      ? "ml-auto bg-brown-600 text-cream"
+                      ? "ml-auto bg-[#6f4a2e] text-cream"
                       : "bg-brown-50 text-brown-900",
                   )}
                 >
@@ -199,13 +199,13 @@ export function SupportInbox() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Type a reply…"
-                className="min-w-0 flex-1 rounded-full border border-line bg-cream/40 px-4 py-2 text-sm outline-none focus:border-brown-300 focus:ring-2 focus:ring-brown-100"
+                className="min-w-0 flex-1 rounded-full border border-line bg-brown-50/40 px-4 py-2 text-sm outline-none focus:border-brown-300 focus:ring-2 focus:ring-brown-100"
               />
               <button
                 type="submit"
                 disabled={sending || !input.trim()}
                 aria-label="Send reply"
-                className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-brown-600 text-cream hover:bg-brown-700 disabled:opacity-40"
+                className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-[#6f4a2e] text-cream hover:bg-[#573a26] disabled:opacity-40"
               >
                 <Send className="h-4 w-4" />
               </button>

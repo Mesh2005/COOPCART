@@ -85,13 +85,13 @@ export function HeroShowcase() {
             aria-pressed={slide === i}
             className={cn(
               "inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium transition-colors",
-              slide === i ? "bg-brown-600 text-cream" : "text-muted hover:bg-brown-50",
+              slide === i ? "bg-[#6f4a2e] text-cream" : "text-muted hover:bg-brown-50",
             )}
           >
             <span
               className={cn(
                 "h-1.5 w-1.5 rounded-full",
-                slide === i ? "bg-cream" : "bg-brown-300",
+                slide === i ? "bg-brown-50" : "bg-brown-300",
               )}
             />
             {label}

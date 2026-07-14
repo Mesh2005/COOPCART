@@ -6,13 +6,14 @@ import { PageTransition } from "@/components/ui/page-transition";
 import { Logo } from "@/components/brand/logo";
 import { NotificationBell } from "@/components/notifications/notification-bell";
 import { CommandPalette, CommandTrigger } from "@/components/admin/command-palette";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const profile = await requireStaff();
 
   return (
     <div className="min-h-dvh lg:grid lg:grid-cols-[260px_1fr]">
-      <aside className="hidden border-r border-line bg-brown-900 text-cream lg:flex lg:flex-col">
+      <aside className="hidden border-r border-line bg-[#2a1d14] text-cream lg:flex lg:flex-col">
         <Link href="/admin" className="flex items-center px-5 py-5 text-cream">
           <Logo tagline="Admin console" />
         </Link>
@@ -28,6 +29,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             <p className="text-xs capitalize text-muted">{profile.role}</p>
           </div>
           <div className="flex items-center gap-2">
+            <ThemeToggle />
             <CommandTrigger />
             <NotificationBell />
             <LogoutButton redirectTo="/admin/login" />

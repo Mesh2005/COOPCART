@@ -82,7 +82,7 @@ export function HeroDashboard({ className }: { className?: string }) {
                 <CountUp value={48200} prefix="Rs " />
               </p>
             </div>
-            <span className="rounded-full bg-sage-300/35 px-2 py-1 text-[11px] font-semibold text-sage-600">
+            <span className="rounded-full bg-green-500/15 px-2 py-1 text-[11px] font-semibold text-green-600">
               ▲ 12%
             </span>
           </div>
@@ -104,7 +104,7 @@ export function HeroDashboard({ className }: { className?: string }) {
                     animate={{ scaleY: 1 }}
                     transition={{ delay: 0.25 + i * 0.07, duration: 0.6, ease: EASE }}
                     style={{ height: `${h}%`, transformOrigin: "bottom" }}
-                    className={cn("w-full rounded-md", i === 5 ? "bg-brown-600" : "bg-yolk-300")}
+                    className={cn("w-full rounded-md", i === 5 ? "bg-[#6f4a2e]" : "bg-yolk-300")}
                   />
                 </div>
                 <span className="text-[10px] text-muted">{days[i]}</span>

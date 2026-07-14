@@ -153,14 +153,14 @@ export default function Home() {
         </section>
 
         {/* How it works */}
-        <section id="how" className="bg-brown-900 py-20 text-cream sm:py-24">
+        <section id="how" className="bg-[#2a1d14] py-20 text-cream sm:py-24">
           <div className={SHELL}>
             <Reveal className="max-w-2xl">
-              <Badge className="bg-yolk-400 text-brown-900">How it works</Badge>
+              <Badge className="bg-yolk-400 text-[#2a1d14]">How it works</Badge>
               <h2 className="mt-4 text-3xl text-cream sm:text-4xl">
                 From sign-up to delivery in four steps
               </h2>
-              <p className="mt-3 text-pretty text-brown-100/80">
+              <p className="mt-3 text-pretty text-cream/80">
                 A simple, reliable ordering flow built for busy wholesale buyers.
               </p>
             </Reveal>
@@ -170,7 +170,7 @@ export default function Home() {
                 <Reveal key={s.title} delay={i * 0.08}>
                   <div className="h-full rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur">
                     <div className="flex items-center justify-between">
-                      <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-yolk-400 text-brown-900">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-yolk-400 text-[#2a1d14]">
                         <s.icon className="h-6 w-6" />
                       </div>
                       <span className="font-display text-3xl font-semibold text-white/15">
@@ -178,7 +178,7 @@ export default function Home() {
                       </span>
                     </div>
                     <h3 className="mt-5 text-lg text-cream">{s.title}</h3>
-                    <p className="mt-2 text-sm text-brown-100/75">{s.body}</p>
+                    <p className="mt-2 text-sm text-cream/75">{s.body}</p>
                   </div>
                 </Reveal>
               ))}
@@ -272,14 +272,14 @@ export default function Home() {
         <section className="pb-24">
           <div className={SHELL}>
             <Reveal>
-              <div className="relative overflow-hidden rounded-[2rem] bg-brown-800 px-8 py-14 text-center text-cream sm:px-12">
+              <div className="relative overflow-hidden rounded-[2rem] bg-[#3d2a1c] px-8 py-14 text-center text-cream sm:px-12">
                 <div className="glow-warm pointer-events-none absolute inset-x-0 top-0 h-40" />
                 <div className="relative mx-auto max-w-2xl">
                   <ClipboardCheck className="mx-auto h-10 w-10 text-yolk-400" />
                   <h2 className="mt-4 text-3xl text-cream sm:text-4xl">
                     Ready to order wholesale eggs the easy way?
                   </h2>
-                  <p className="mt-3 text-pretty text-brown-100/80">
+                  <p className="mt-3 text-pretty text-cream/80">
                     Register your business today. Once approved, you’ll have live pricing, bulk
                     tiers, and a delivery schedule at your fingertips.
                   </p>

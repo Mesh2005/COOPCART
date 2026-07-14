@@ -42,19 +42,19 @@ export default async function AdminInventoryPage() {
               )}
             </div>
             <div className="mt-4 grid grid-cols-3 gap-2 text-center text-sm">
-              <div className="rounded-lg bg-cream p-2">
+              <div className="rounded-lg bg-brown-50 p-2">
                 <p className="text-xl font-bold text-brown-900">
                   {row.trays_on_hand}
                 </p>
                 <p className="text-xs text-muted">On hand</p>
               </div>
-              <div className="rounded-lg bg-cream p-2">
+              <div className="rounded-lg bg-brown-50 p-2">
                 <p className="text-xl font-bold text-brown-600">
                   {row.trays_reserved}
                 </p>
                 <p className="text-xs text-muted">Reserved</p>
               </div>
-              <div className="rounded-lg bg-cream p-2">
+              <div className="rounded-lg bg-brown-50 p-2">
                 <p className="text-xl font-bold text-sage-700">
                   {row.trays_available}
                 </p>
@@ -83,7 +83,7 @@ export default async function AdminInventoryPage() {
           </h2>
           {movements.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-8 text-muted">
-              <Boxes className="h-10 w-10 text-brown-200" />
+              <Boxes className="h-10 w-10 text-brown-400" />
               <p className="mt-3 text-sm">No movements yet.</p>
             </div>
           ) : (

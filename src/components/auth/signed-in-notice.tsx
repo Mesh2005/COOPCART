@@ -21,7 +21,7 @@ export function SignedInNotice({
   switchTo: string;
 }) {
   return (
-    <div className="mb-5 rounded-2xl border border-line bg-cream/70 p-4">
+    <div className="mb-5 rounded-2xl border border-line bg-brown-50/70 p-4">
       <p className="text-sm text-brown-800">
         You’re signed in as{" "}
         <span className="font-semibold text-brown-900">{email ?? "your account"}</span>{" "}

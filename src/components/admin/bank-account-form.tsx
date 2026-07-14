@@ -16,7 +16,7 @@ export function BankAccountForm({ bank }: { bank?: BankAccount }) {
   );
 
   return (
-    <form action={action} className="rounded-xl border border-line bg-cream/40 p-4 space-y-4">
+    <form action={action} className="rounded-xl border border-line bg-brown-50/40 p-4 space-y-4">
       {bank && <input type="hidden" name="id" value={bank.id} />}
       <input type="hidden" name="isActive" value="true" />
 

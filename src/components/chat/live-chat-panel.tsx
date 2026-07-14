@@ -116,7 +116,7 @@ export function LiveChatPanel() {
         </p>
         <Link
           href="/login"
-          className="rounded-full bg-brown-600 px-4 py-2 text-sm font-medium text-cream hover:bg-brown-700"
+          className="rounded-full bg-[#6f4a2e] px-4 py-2 text-sm font-medium text-cream hover:bg-[#573a26]"
         >
           Log in
         </Link>
@@ -137,8 +137,8 @@ export function LiveChatPanel() {
             className={cn(
               "max-w-[85%] rounded-2xl px-3.5 py-2 text-sm",
               m.sender_role === "customer"
-                ? "ml-auto bg-brown-600 text-cream"
-                : "bg-sage-200 text-brown-900",
+                ? "ml-auto bg-[#6f4a2e] text-cream"
+                : "bg-sage-200 text-[#2a1d14]",
             )}
           >
             {m.body}
@@ -156,13 +156,13 @@ export function LiveChatPanel() {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="Message the team…"
-          className="min-w-0 flex-1 rounded-full border border-line bg-cream/40 px-4 py-2 text-sm outline-none focus:border-brown-300 focus:ring-2 focus:ring-brown-100"
+          className="min-w-0 flex-1 rounded-full border border-line bg-brown-50/40 px-4 py-2 text-sm outline-none focus:border-brown-300 focus:ring-2 focus:ring-brown-100"
         />
         <button
           type="submit"
           disabled={sending || !input.trim()}
           aria-label="Send message"
-          className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-brown-600 text-cream hover:bg-brown-700 disabled:opacity-40"
+          className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-[#6f4a2e] text-cream hover:bg-[#573a26] disabled:opacity-40"
         >
           <Send className="h-4 w-4" />
         </button>

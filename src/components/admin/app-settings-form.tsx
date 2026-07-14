@@ -43,7 +43,7 @@ export function AppSettingsForm({ settings }: { settings: AppSettings }) {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
-        <label className="flex items-center gap-3 rounded-xl border border-line bg-cream p-4 cursor-pointer">
+        <label className="flex items-center gap-3 rounded-xl border border-line bg-brown-50 p-4 cursor-pointer">
           <input
             type="checkbox"
             name="bankTransferEnabled"
@@ -55,7 +55,7 @@ export function AppSettingsForm({ settings }: { settings: AppSettings }) {
             Bank transfer enabled
           </span>
         </label>
-        <label className="flex items-center gap-3 rounded-xl border border-line bg-cream p-4 cursor-pointer">
+        <label className="flex items-center gap-3 rounded-xl border border-line bg-brown-50 p-4 cursor-pointer">
           <input
             type="checkbox"
             name="codEnabled"

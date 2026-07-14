@@ -134,7 +134,7 @@ export default async function InvoicePage({
 
         {/* bank details for bank transfer */}
         {isBank && bank && order.payment_status !== "verified" && (
-          <div className="mt-6 rounded-xl border border-line bg-cream/50 p-4">
+          <div className="mt-6 rounded-xl border border-line bg-brown-50/50 p-4">
             <p className="text-xs font-semibold uppercase tracking-wide text-muted">
               Bank transfer details
             </p>

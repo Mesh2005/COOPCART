@@ -53,7 +53,7 @@ export function CommandTrigger() {
     >
       <Search className="h-3.5 w-3.5" />
       <span className="hidden sm:inline">Search…</span>
-      <kbd className="hidden rounded border border-line bg-cream px-1.5 py-0.5 font-sans text-[10px] font-medium sm:inline">
+      <kbd className="hidden rounded border border-line bg-brown-50 px-1.5 py-0.5 font-sans text-[10px] font-medium sm:inline">
         ⌘K
       </kbd>
     </button>
@@ -126,7 +126,7 @@ export function CommandPalette() {
 
   return (
     <div
-      className="fixed inset-0 z-[80] flex items-start justify-center bg-brown-900/40 px-4 pt-[12vh] backdrop-blur-sm"
+      className="fixed inset-0 z-[80] flex items-start justify-center bg-[#2a1d14]/40 px-4 pt-[12vh] backdrop-blur-sm"
       onClick={() => setOpen(false)}
     >
       <div

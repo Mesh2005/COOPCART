@@ -59,7 +59,7 @@ export function RegisterForm() {
         {otpState.success && <Alert variant="success">{otpState.success}</Alert>}
         {regState.error && <Alert variant="error">{regState.error}</Alert>}
 
-        <div className="flex items-start gap-3 rounded-2xl border border-line bg-cream/60 p-4">
+        <div className="flex items-start gap-3 rounded-2xl border border-line bg-brown-50/60 p-4">
           <ShieldCheck className="mt-0.5 h-5 w-5 text-sage-500" />
           <p className="text-sm text-brown-800">
             We emailed a 6-digit code to{" "}

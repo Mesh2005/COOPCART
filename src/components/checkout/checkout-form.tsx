@@ -149,7 +149,7 @@ export function CheckoutForm({
             )}
           </div>
           {method === "bank_transfer" && bank && (
-            <div className="mt-4 rounded-xl border border-line bg-cream/50 p-4 text-sm">
+            <div className="mt-4 rounded-xl border border-line bg-brown-50/50 p-4 text-sm">
               <p className="font-semibold text-brown-900">Bank transfer details</p>
               <dl className="mt-2 space-y-1">
                 <Row k="Account name" v={bank.account_name} />
@@ -237,7 +237,7 @@ function OptionCard({
         active ? "border-brown-500 bg-brown-50 ring-1 ring-brown-400" : "border-line bg-surface hover:bg-brown-50",
       )}
     >
-      <span className={cn("flex h-9 w-9 items-center justify-center rounded-lg", active ? "bg-brown-600 text-cream" : "bg-brown-50 text-brown-500")}>
+      <span className={cn("flex h-9 w-9 items-center justify-center rounded-lg", active ? "bg-[#6f4a2e] text-cream" : "bg-brown-50 text-brown-500")}>
         <Icon className="h-5 w-5" />
       </span>
       <span>

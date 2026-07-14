@@ -8,7 +8,7 @@ export const badgeVariants = cva(
     variants: {
       variant: {
         neutral: "bg-brown-50 text-brown-700",
-        brand: "bg-brown-600 text-cream",
+        brand: "bg-[#6f4a2e] text-cream",
         accent: "bg-yolk-200 text-brown-800",
         sage: "bg-sage-300/35 text-sage-600",
         outline: "border border-line text-brown-700",

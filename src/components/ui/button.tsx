@@ -9,9 +9,9 @@ export const buttonVariants = cva(
     variants: {
       variant: {
         primary:
-          "bg-brown-600 text-cream shadow-sm hover:bg-brown-700 hover:shadow-md active:translate-y-px",
+          "bg-[#6f4a2e] text-[#fbf7f0] shadow-sm hover:bg-[#573a26] hover:shadow-md active:translate-y-px",
         accent:
-          "bg-yolk-400 text-brown-900 shadow-sm hover:bg-yolk-500 active:translate-y-px",
+          "bg-yolk-400 text-[#2a1d14] shadow-sm hover:bg-yolk-500 active:translate-y-px",
         secondary:
           "border border-line bg-surface text-brown-700 hover:bg-brown-50",
         outline: "border border-brown-300 text-brown-700 hover:bg-brown-50",

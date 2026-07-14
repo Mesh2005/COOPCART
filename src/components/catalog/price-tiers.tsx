@@ -10,7 +10,7 @@ export function PriceTiers({ tiers, activeQty }: { tiers: PriceTier[]; activeQty
   if (sorted.length === 0) return null;
 
   return (
-    <div className="rounded-xl border border-line bg-cream/50 p-3">
+    <div className="rounded-xl border border-line bg-brown-50/50 p-3">
       <p className="mb-2 text-xs font-semibold text-brown-800">Bulk pricing · per tray</p>
       <ul className="space-y-0.5 text-xs">
         {sorted.map((t) => {

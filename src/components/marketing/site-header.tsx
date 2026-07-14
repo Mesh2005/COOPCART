@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import { Logo } from "@/components/brand/logo";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { cn } from "@/lib/utils";
 
 const nav = [
@@ -30,7 +31,7 @@ export function SiteHeader() {
       className={cn(
         "sticky top-0 z-50 transition-all duration-300",
         scrolled
-          ? "border-b border-line bg-cream/85 backdrop-blur-md"
+          ? "border-b border-line bg-brown-50/85 backdrop-blur-md"
           : "border-b border-transparent",
       )}
     >
@@ -52,6 +53,7 @@ export function SiteHeader() {
         </nav>
 
         <div className="hidden items-center gap-2 md:flex">
+          <ThemeToggle />
           <Link href="/login" className={cn(buttonVariants({ variant: "ghost", size: "sm" }))}>
             Log in
           </Link>
@@ -60,19 +62,22 @@ export function SiteHeader() {
           </Link>
         </div>
 
-        <button
-          type="button"
-          onClick={() => setOpen((o) => !o)}
-          aria-label="Toggle menu"
-          aria-expanded={open}
-          className="flex h-10 w-10 items-center justify-center rounded-full text-brown-700 hover:bg-brown-50 md:hidden"
-        >
-          {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-        </button>
+        <div className="flex items-center gap-1 md:hidden">
+          <ThemeToggle />
+          <button
+            type="button"
+            onClick={() => setOpen((o) => !o)}
+            aria-label="Toggle menu"
+            aria-expanded={open}
+            className="flex h-10 w-10 items-center justify-center rounded-full text-brown-700 hover:bg-brown-50"
+          >
+            {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
+        </div>
       </div>
 
       {open && (
-        <div className="border-t border-line bg-cream px-5 py-4 md:hidden">
+        <div className="border-t border-line bg-brown-50 px-5 py-4 md:hidden">
           <nav className="flex flex-col gap-1">
             {nav.map((n) => (
               <a

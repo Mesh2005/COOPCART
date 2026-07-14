@@ -44,6 +44,50 @@
   --ease-soft: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+/* ------------------------------------------------------------------ *
+ * Dark theme — overrides the semantic tokens and FLIPS the brown ramp *
+ * so the many `text-brown-800/900` usages read light automatically.   *
+ * `cream` stays light (it's used as light text on dark surfaces); the *
+ * page background is set on <body> below. Genuinely-dark surfaces      *
+ * (bg-brown-700/800/900, buttons, active nav) use fixed hex in markup. *
+ * ------------------------------------------------------------------ */
+@layer base {
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+
+    --color-surface: #221a12;
+    --color-ink: #ece2d4;
+    --color-muted: #a4947f;
+    --color-line: #392c20;
+
+    --color-brown-50: #241b13;
+    --color-brown-100: #2f2418;
+    --color-brown-200: #3d3022;
+    --color-brown-300: #5b4a38;
+    --color-brown-400: #8c7659;
+    --color-brown-500: #a98f69;
+    --color-brown-600: #c4a67c;
+    --color-brown-700: #dac9af;
+    --color-brown-800: #e9ddc9;
+    --color-brown-900: #f5ecdd;
+  }
+
+  :root[data-theme="dark"] body {
+    background-color: #17120d;
+    color: var(--color-ink);
+  }
+}
+
+/* Smooth the light/dark swap. */
+body,
+.card-hover,
+[class*="bg-surface"],
+[class*="border-line"] {
+  transition:
+    background-color 0.25s var(--ease-soft),
+    border-color 0.25s var(--ease-soft);
+}
+
 @layer base {
   *,
   ::before,

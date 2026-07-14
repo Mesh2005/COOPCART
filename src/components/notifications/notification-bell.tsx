@@ -98,7 +98,7 @@ export function NotificationBell({ dark }: { dark?: boolean }) {
         aria-label="Notifications"
         className={cn(
           "relative flex h-10 w-10 items-center justify-center rounded-full transition-colors",
-          dark ? "text-brown-100 hover:bg-white/10" : "text-brown-700 hover:bg-brown-50",
+          dark ? "text-cream hover:bg-white/10" : "text-brown-700 hover:bg-brown-50",
         )}
       >
         <Bell className="h-5 w-5" />

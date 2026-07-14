@@ -103,7 +103,7 @@ export function ChatWidget() {
         type="button"
         onClick={() => setOpen((o) => !o)}
         aria-label={open ? "Close chat" : "Open chat"}
-        className="fixed bottom-5 right-5 z-[60] flex h-14 w-14 items-center justify-center rounded-full bg-brown-600 text-cream shadow-lg transition-transform hover:scale-105 active:scale-95"
+        className="fixed bottom-5 right-5 z-[60] flex h-14 w-14 items-center justify-center rounded-full bg-[#6f4a2e] text-cream shadow-lg transition-transform hover:scale-105 active:scale-95"
       >
         {open ? <X className="h-6 w-6" /> : <MessageCircle className="h-6 w-6" />}
         {!open && unread > 0 && (
@@ -115,8 +115,8 @@ export function ChatWidget() {
 
       {open && (
         <div className="animate-scale-in fixed bottom-24 right-5 z-[60] flex h-[min(560px,75vh)] w-[min(380px,calc(100vw-2.5rem))] flex-col overflow-hidden rounded-3xl border border-line bg-surface shadow-2xl">
-          <div className="flex items-center gap-3 border-b border-line bg-brown-600 px-4 py-3 text-cream">
-            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-cream/15">
+          <div className="flex items-center gap-3 border-b border-line bg-[#6f4a2e] px-4 py-3 text-cream">
+            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-brown-50/15">
               <Egg className="h-5 w-5" />
             </span>
             <div className="leading-tight">
@@ -128,7 +128,7 @@ export function ChatWidget() {
           </div>
 
           {/* Tab switcher */}
-          <div className="flex border-b border-line bg-cream/40 p-1.5">
+          <div className="flex border-b border-line bg-brown-50/40 p-1.5">
             <TabButton active={tab === "assistant"} onClick={() => setTab("assistant")} icon={Bot} label="Assistant" />
             <TabButton active={tab === "live"} onClick={() => setTab("live")} icon={Headset} label="Live chat" />
           </div>
@@ -141,7 +141,7 @@ export function ChatWidget() {
                     key={i}
                     className={cn(
                       "max-w-[85%] rounded-2xl px-3.5 py-2 text-sm",
-                      m.role === "user" ? "ml-auto bg-brown-600 text-cream" : "bg-brown-50 text-brown-900",
+                      m.role === "user" ? "ml-auto bg-[#6f4a2e] text-cream" : "bg-brown-50 text-brown-900",
                     )}
                   >
                     {m.content}
@@ -161,7 +161,7 @@ export function ChatWidget() {
                         key={s}
                         type="button"
                         onClick={() => send(s)}
-                        className="block w-full rounded-xl border border-line bg-cream/50 px-3 py-2 text-left text-xs font-medium text-brown-700 hover:bg-brown-50"
+                        className="block w-full rounded-xl border border-line bg-brown-50/50 px-3 py-2 text-left text-xs font-medium text-brown-700 hover:bg-brown-50"
                       >
                         {s}
                       </button>
@@ -180,13 +180,13 @@ export function ChatWidget() {
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   placeholder="Ask a question…"
-                  className="min-w-0 flex-1 rounded-full border border-line bg-cream/40 px-4 py-2 text-sm outline-none focus:border-brown-300 focus:ring-2 focus:ring-brown-100"
+                  className="min-w-0 flex-1 rounded-full border border-line bg-brown-50/40 px-4 py-2 text-sm outline-none focus:border-brown-300 focus:ring-2 focus:ring-brown-100"
                 />
                 <button
                   type="submit"
                   disabled={loading || !input.trim()}
                   aria-label="Send message"
-                  className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-brown-600 text-cream transition-opacity hover:bg-brown-700 disabled:opacity-40"
+                  className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-[#6f4a2e] text-cream transition-opacity hover:bg-[#573a26] disabled:opacity-40"
                 >
                   <Send className="h-4 w-4" />
                 </button>

@@ -40,7 +40,7 @@ export default async function AdminPaymentsPage() {
         </h2>
         {pendingWithUrls.length === 0 ? (
           <div className="rounded-2xl border border-line bg-surface p-8 text-center text-muted">
-            <Wallet className="mx-auto h-10 w-10 text-brown-200" />
+            <Wallet className="mx-auto h-10 w-10 text-brown-400" />
             <p className="mt-3">No slips waiting for verification.</p>
           </div>
         ) : (

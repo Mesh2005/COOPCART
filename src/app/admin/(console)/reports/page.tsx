@@ -33,7 +33,7 @@ export default async function AdminReportsPage({
               href={`?days=${d}`}
               className={
                 d === validDays
-                  ? "rounded-full bg-brown-600 px-3 py-1 font-semibold text-cream"
+                  ? "rounded-full bg-[#6f4a2e] px-3 py-1 font-semibold text-cream"
                   : "rounded-full border border-line px-3 py-1 text-muted hover:bg-brown-50"
               }
             >
