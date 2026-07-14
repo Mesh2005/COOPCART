@@ -19,6 +19,8 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { canAccessAdminPath } from "@/lib/rbac";
+import type { UserRole } from "@/lib/types";
 import { SupportBadge } from "@/components/admin/support-badge";
 
 type NavItem = { href: string; label: string; icon: LucideIcon; badge?: "support" };
@@ -64,14 +66,21 @@ export function NavLinks({
   className,
   onNavigate,
   dark,
+  role,
 }: {
   section: "admin" | "app";
   className?: string;
   onNavigate?: () => void;
   dark?: boolean;
+  /** Current user's role — used to hide admin links they can't access. */
+  role?: UserRole;
 }) {
   const pathname = usePathname();
-  const { base, items } = NAVS[section];
+  const { base, items: allItems } = NAVS[section];
+  const items =
+    section === "admin" && role
+      ? allItems.filter((item) => canAccessAdminPath(role, item.href))
+      : allItems;
 
   return (
     <nav className={cn("flex flex-col gap-1", className)}>

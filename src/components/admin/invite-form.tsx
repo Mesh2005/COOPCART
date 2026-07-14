@@ -18,7 +18,7 @@ const ROLE_LABELS: Record<string, string> = {
   delivery: "Delivery",
 };
 
-export function InviteFormClient() {
+export function InviteFormClient({ canCreateAdmin = false }: { canCreateAdmin?: boolean }) {
   const [state, action, pending] = useActionState(addStaffAction, initialActionState);
 
   return (
@@ -51,7 +51,7 @@ export function InviteFormClient() {
       </Field>
       <Field label="Role" htmlFor="role" required>
         <Select id="role" name="role" required defaultValue="manager">
-          {STAFF_ROLES.map((r) => (
+          {STAFF_ROLES.filter((r) => canCreateAdmin || r !== "admin").map((r) => (
             <option key={r} value={r}>
               {ROLE_LABELS[r]}
             </option>

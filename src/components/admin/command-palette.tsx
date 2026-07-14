@@ -20,6 +20,8 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { canAccessAdminPath } from "@/lib/rbac";
+import type { UserRole } from "@/lib/types";
 
 type Cmd = { label: string; href: string; icon: LucideIcon; keywords?: string };
 
@@ -60,12 +62,14 @@ export function CommandTrigger() {
   );
 }
 
-export function CommandPalette() {
+export function CommandPalette({ role }: { role?: UserRole }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [q, setQ] = useState("");
   const [active, setActive] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const available = role ? COMMANDS.filter((c) => canAccessAdminPath(role, c.href)) : COMMANDS;
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -96,9 +100,9 @@ export function CommandPalette() {
 
   const results = useMemo(() => {
     const term = q.trim().toLowerCase();
-    if (!term) return COMMANDS;
-    return COMMANDS.filter((c) => `${c.label} ${c.keywords ?? ""}`.toLowerCase().includes(term));
-  }, [q]);
+    if (!term) return available;
+    return available.filter((c) => `${c.label} ${c.keywords ?? ""}`.toLowerCase().includes(term));
+  }, [q, available]);
 
   useEffect(() => setActive(0), [q]);
 

@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { STAFF_ROLES, type Business, type Profile } from "@/lib/types";
+import { STAFF_ROLES, type Business, type Profile, type UserRole } from "@/lib/types";
 
 /** The authenticated Supabase user (or null). */
 export async function getSessionUser() {
@@ -34,6 +34,16 @@ export async function requireStaff(): Promise<Profile> {
   const profile = await getCurrentProfile();
   if (!profile) redirect("/admin/login");
   if (!(STAFF_ROLES as readonly string[]).includes(profile.role)) redirect("/app");
+  return profile;
+}
+
+/**
+ * Require one of the given roles for a page. Builds on requireStaff, then
+ * bounces staff who lack the role back to the admin overview.
+ */
+export async function requireRole(roles: readonly UserRole[]): Promise<Profile> {
+  const profile = await requireStaff();
+  if (!roles.includes(profile.role as UserRole)) redirect("/admin");
   return profile;
 }
 

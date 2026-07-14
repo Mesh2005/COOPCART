@@ -18,7 +18,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           <Logo tagline="Admin console" />
         </Link>
         <div className="px-3">
-          <NavLinks section="admin" dark />
+          <NavLinks section="admin" dark role={profile.role} />
         </div>
       </aside>
 
@@ -37,14 +37,14 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         </header>
 
         <div className="border-b border-line bg-surface/40 px-3 py-2 lg:hidden">
-          <NavLinks section="admin" className="flex-row overflow-x-auto" />
+          <NavLinks section="admin" className="flex-row overflow-x-auto" role={profile.role} />
         </div>
 
         <main id="main-content" className="flex-1 px-5 py-6 sm:px-8 sm:py-8">
           <PageTransition>{children}</PageTransition>
         </main>
       </div>
-      <CommandPalette />
+      <CommandPalette role={profile.role} />
     </div>
   );
 }

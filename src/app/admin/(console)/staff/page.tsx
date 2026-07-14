@@ -4,8 +4,12 @@ import { PageHeader } from "@/components/admin/page-header";
 import { StaffTable } from "@/components/admin/staff-table";
 import { InviteFormClient } from "@/components/admin/invite-form";
 import { EmptyState } from "@/components/ui/empty-state";
+import { requireRole } from "@/lib/auth";
+import { STAFF_MANAGE_ROLES } from "@/lib/rbac";
 
 export default async function AdminStaffPage() {
+  // Only admins and managers may manage the team.
+  const me = await requireRole(STAFF_MANAGE_ROLES);
   const staff = await getStaffList();
 
   return (
@@ -29,7 +33,7 @@ export default async function AdminStaffPage() {
         <h2 className="mb-4 font-display text-lg font-semibold text-brown-900">
           Add staff member
         </h2>
-        <InviteFormClient />
+        <InviteFormClient canCreateAdmin={me.role === "admin"} />
       </div>
     </div>
   );

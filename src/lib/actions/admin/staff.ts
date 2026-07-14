@@ -3,8 +3,22 @@
 import { revalidatePath } from "next/cache";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { getCurrentProfile } from "@/lib/auth";
+import { STAFF_MANAGE_ROLES } from "@/lib/rbac";
 import type { ActionState } from "@/lib/actions/state";
 import { STAFF_ROLES, type StaffRole } from "@/lib/types";
+
+/**
+ * Gate a staff-management action: the caller must be an admin or manager.
+ * Returns the caller's role, or an error state to short-circuit the action.
+ */
+async function requireStaffManager(): Promise<{ role: string } | { error: string }> {
+  const me = await getCurrentProfile();
+  if (!me || !(STAFF_MANAGE_ROLES as readonly string[]).includes(me.role)) {
+    return { error: "You don't have permission to manage staff." };
+  }
+  return { role: me.role };
+}
 
 /** A readable random temporary password (mixed case + digits, no lookalikes). */
 function generateTempPassword(): string {
@@ -24,6 +38,9 @@ export async function addStaffAction(
   _prev: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
+  const gate = await requireStaffManager();
+  if ("error" in gate) return { error: gate.error };
+
   const email = String(formData.get("email") ?? "").trim().toLowerCase();
   const fullName = String(formData.get("fullName") ?? "").trim();
   const role = formData.get("role") as StaffRole;
@@ -32,11 +49,16 @@ export async function addStaffAction(
   if (!(STAFF_ROLES as readonly string[]).includes(role)) {
     return { error: "Please choose a valid role." };
   }
+  // Only admins may create/assign the admin role (anti-escalation).
+  if (role === "admin" && gate.role !== "admin") {
+    return { error: "Only an admin can add or assign the admin role." };
+  }
 
   const admin = createSupabaseAdminClient(); // service role: create the auth user
-  // The role change must run as the logged-in admin — a DB guard
-  // (guard_profile_role) rejects role edits unless is_admin() is true, which
-  // the service-role client can't satisfy. The caller here is already an admin.
+  // The role change runs as the logged-in admin/manager — a DB guard
+  // (guard_profile_role) rejects role edits unless the caller is a manager or
+  // admin (and only admins may touch the admin role), which the service-role
+  // client can't satisfy, so we use the session client here.
   const supabase = await createSupabaseServerClient();
 
   // Promote if the account already exists.
@@ -89,13 +111,17 @@ export async function updateStaffRoleAction(
   _prev: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
+  const gate = await requireStaffManager();
+  if ("error" in gate) return { error: gate.error };
+
   const userId = formData.get("userId") as string;
   const role = formData.get("role") as StaffRole;
+  if (role === "admin" && gate.role !== "admin") {
+    return { error: "Only an admin can assign the admin role." };
+  }
+
   const supabase = await createSupabaseServerClient();
-  const { error } = await supabase
-    .from("profiles")
-    .update({ role })
-    .eq("id", userId);
+  const { error } = await supabase.from("profiles").update({ role }).eq("id", userId);
   if (error) return { error: error.message };
   revalidatePath("/admin/staff");
   return { success: "Role updated." };
@@ -105,12 +131,25 @@ export async function deactivateStaffAction(
   _prev: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
+  const gate = await requireStaffManager();
+  if ("error" in gate) return { error: gate.error };
+
   const userId = formData.get("userId") as string;
   const supabase = await createSupabaseServerClient();
-  const { error } = await supabase
-    .from("profiles")
-    .update({ is_active: false })
-    .eq("id", userId);
+
+  // A manager may not deactivate an admin.
+  if (gate.role !== "admin") {
+    const { data: target } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", userId)
+      .maybeSingle();
+    if (target?.role === "admin") {
+      return { error: "Only an admin can deactivate an admin." };
+    }
+  }
+
+  const { error } = await supabase.from("profiles").update({ is_active: false }).eq("id", userId);
   if (error) return { error: error.message };
   revalidatePath("/admin/staff");
   return { success: "Staff member deactivated." };
