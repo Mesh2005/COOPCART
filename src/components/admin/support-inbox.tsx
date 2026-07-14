@@ -1,8 +1,10 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ArrowLeft, MessageSquare, Send } from "lucide-react";
+import { ArrowLeft, MessageSquare, Send, Trash2 } from "lucide-react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+import { deleteConversationAction } from "@/lib/actions/admin/chat";
+import { toast } from "@/components/ui/toaster";
 import { cn } from "@/lib/utils";
 
 type Conv = {
@@ -33,6 +35,7 @@ export function SupportInbox() {
   const [messages, setMessages] = useState<Row[]>([]);
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const loadConvs = useCallback(async () => {
@@ -119,6 +122,24 @@ export function SupportInbox() {
     setSending(false);
   }
 
+  async function handleDelete() {
+    if (!activeId || deleting) return;
+    if (!window.confirm("Delete this conversation and all its messages? This can't be undone.")) {
+      return;
+    }
+    setDeleting(true);
+    const res = await deleteConversationAction(activeId);
+    setDeleting(false);
+    if (res.error) {
+      toast(res.error, "error");
+      return;
+    }
+    setConvs((cs) => cs.filter((c) => c.id !== activeId));
+    setActiveId(null);
+    setMessages([]);
+    toast("Conversation deleted.", "success");
+  }
+
   const active = convs.find((c) => c.id === activeId);
 
   return (
@@ -169,6 +190,16 @@ export function SupportInbox() {
                 <p className="text-sm font-semibold text-brown-900">{active.name}</p>
                 <p className="text-xs capitalize text-muted">{active.status}</p>
               </div>
+              <button
+                type="button"
+                onClick={handleDelete}
+                disabled={deleting}
+                aria-label="Delete conversation"
+                title="Delete conversation"
+                className="ml-auto flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full text-muted transition-colors hover:bg-danger/10 hover:text-danger disabled:opacity-50"
+              >
+                <Trash2 className="h-4 w-4" />
+              </button>
             </div>
             <div ref={scrollRef} className="flex-1 space-y-3 overflow-y-auto px-4 py-4">
               {messages.map((m) => (
