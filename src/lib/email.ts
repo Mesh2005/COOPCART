@@ -86,7 +86,9 @@ function shell(heading: string, bodyHtml: string, preheader = ""): string {
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light">
+  <meta name="supported-color-schemes" content="light">
   <meta name="x-apple-disable-message-reformatting">
+  <style>:root { color-scheme: light; supported-color-schemes: light; }</style>
 </head>
 <body style="margin:0;padding:0;background:#f4ece0;">
   ${preheader ? `<div style="display:none;max-height:0;overflow:hidden;opacity:0;color:transparent;height:0;width:0;">${preheader}</div>` : ""}
@@ -95,17 +97,13 @@ function shell(heading: string, bodyHtml: string, preheader = ""): string {
       <td align="center" style="padding:28px 14px;">
         <table role="presentation" width="560" cellpadding="0" cellspacing="0" border="0" style="width:560px;max-width:560px;background:#ffffff;border-radius:18px;overflow:hidden;border:1px solid #ece1d1;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
           <tr>
-            <td style="background:#5b3a24;padding:22px 32px;">
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-                <tr>
-                  <td style="font-size:20px;font-weight:700;color:#fbf3e7;letter-spacing:.2px;">
-                    <span style="font-size:22px;">🥚</span>&nbsp;CoopCart
-                  </td>
-                  <td align="right" style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#d9b892;">
-                    Abeyrathna&nbsp;Farms
-                  </td>
-                </tr>
-              </table>
+            <td style="background:#5b3a24;padding:20px 32px;">
+              <div style="font-size:21px;font-weight:700;color:#fbf3e7;letter-spacing:.2px;line-height:1.25;">
+                <span style="font-size:22px;">🥚</span>&nbsp;CoopCart
+              </div>
+              <div style="margin-top:6px;font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:#d9b892;line-height:1.25;">
+                Abeyrathna Farms
+              </div>
             </td>
           </tr>
           <tr><td style="height:4px;line-height:4px;font-size:0;background:#e6a23c;">&nbsp;</td></tr>
