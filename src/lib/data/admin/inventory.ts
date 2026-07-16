@@ -25,14 +25,19 @@ export interface StockMovementRow {
 
 export async function getInventory(): Promise<InventoryRow[]> {
   const supabase = await createSupabaseServerClient();
-  const { data } = await supabase
+  // Sort in JS by the embedded products.sort_order — PostgREST can't order a
+  // parent by an embedded column here ("products(sort_order)" fails to resolve).
+  const { data, error } = await supabase
     .from("inventory")
     .select(
       `product_id, trays_on_hand, trays_reserved, low_stock_threshold, updated_at,
-       products!inner ( name, size_grade, is_active )`,
-    )
-    .order("products(sort_order)");
-  return (data ?? []).map((i: any) => ({
+       products!inner ( name, size_grade, is_active, sort_order )`,
+    );
+  if (error) throw new Error(`getInventory: ${error.message}`);
+  const rows = (data ?? [])
+    .slice()
+    .sort((a: any, b: any) => (a.products.sort_order ?? 0) - (b.products.sort_order ?? 0));
+  return rows.map((i: any) => ({
     product_id: i.product_id,
     product_name: i.products.name,
     size_grade: i.products.size_grade,
@@ -51,16 +56,18 @@ export async function getStockMovements(
   limit = 50,
 ): Promise<StockMovementRow[]> {
   const supabase = await createSupabaseServerClient();
+  // NB: the columns are `type` and `change_trays` (not movement_type/trays_delta).
   let q = supabase
     .from("stock_movements")
     .select(
-      `id, movement_type, trays_delta, note, created_at, created_by,
+      `id, type, change_trays, note, created_at, created_by,
        products!inner ( name )`,
     )
     .order("created_at", { ascending: false })
     .limit(limit);
   if (productId) q = q.eq("product_id", productId);
-  const { data } = await q;
+  const { data, error } = await q;
+  if (error) throw new Error(`getStockMovements: ${error.message}`);
   const movements = data ?? [];
 
   // stock_movements.created_by references auth.users, not profiles — resolve
@@ -80,8 +87,8 @@ export async function getStockMovements(
   return movements.map((m: any) => ({
     id: m.id,
     product_name: m.products.name,
-    movement_type: m.movement_type,
-    trays_delta: m.trays_delta,
+    movement_type: m.type,
+    trays_delta: m.change_trays,
     note: m.note,
     created_at: m.created_at,
     created_by_name: m.created_by ? (nameMap[m.created_by] ?? null) : null,

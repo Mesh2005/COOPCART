@@ -55,7 +55,7 @@ export default async function AdminInventoryPage() {
                 <p className="text-xs text-muted">Reserved</p>
               </div>
               <div className="rounded-lg bg-brown-50 p-2">
-                <p className="text-xl font-bold text-sage-700">
+                <p className="text-xl font-bold text-sage-600">
                   {row.trays_available}
                 </p>
                 <p className="text-xs text-muted">Available</p>
@@ -101,7 +101,7 @@ export default async function AdminInventoryPage() {
                     <span
                       className={
                         m.trays_delta > 0
-                          ? "font-semibold text-sage-700"
+                          ? "font-semibold text-sage-600"
                           : "font-semibold text-red-600"
                       }
                     >

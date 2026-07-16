@@ -14,7 +14,7 @@ export function StatCard({
 }) {
   const iconClasses: Record<string, string> = {
     yolk: "bg-yolk-200 text-brown-800",
-    sage: "bg-sage-100 text-sage-700",
+    sage: "bg-sage-100 text-sage-600",
     brown: "bg-brown-100 text-brown-700",
     red: "bg-red-100 text-red-700",
   };
