@@ -97,16 +97,16 @@ function shell(heading: string, bodyHtml: string, preheader = ""): string {
       <td align="center" style="padding:28px 14px;">
         <table role="presentation" width="560" cellpadding="0" cellspacing="0" border="0" style="width:560px;max-width:560px;background:#ffffff;border-radius:18px;overflow:hidden;border:1px solid #ece1d1;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
           <tr>
-            <td style="background:#5b3a24;padding:20px 32px;">
-              <div style="font-size:21px;font-weight:700;color:#fbf3e7;letter-spacing:.2px;line-height:1.25;">
+            <td bgcolor="#ffffff" style="background:#ffffff;padding:22px 32px 18px;">
+              <div style="font-size:21px;font-weight:700;color:#5b3a24;letter-spacing:.2px;line-height:1.25;">
                 <span style="font-size:22px;">🥚</span>&nbsp;CoopCart
               </div>
-              <div style="margin-top:6px;font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:#d9b892;line-height:1.25;">
+              <div style="margin-top:6px;font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:#a89078;line-height:1.25;">
                 Abeyrathna Farms
               </div>
             </td>
           </tr>
-          <tr><td style="height:4px;line-height:4px;font-size:0;background:#e6a23c;">&nbsp;</td></tr>
+          <tr><td bgcolor="#e6a23c" style="height:3px;line-height:3px;font-size:0;background:#e6a23c;">&nbsp;</td></tr>
           <tr>
             <td style="padding:34px 32px 30px;color:#2a231d;">
               <h1 style="margin:0 0 16px;font-size:22px;line-height:1.3;color:#3d2a1c;font-weight:700;">${heading}</h1>
