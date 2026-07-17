@@ -30,7 +30,7 @@ export async function getBlackoutDates(): Promise<
 > {
   const supabase = await createSupabaseServerClient();
   const { data } = await supabase
-    .from("delivery_blackouts")
+    .from("delivery_blackout_dates")
     .select("id, date, reason")
     .gte("date", new Date().toISOString().split("T")[0])
     .order("date");

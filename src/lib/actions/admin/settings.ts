@@ -86,7 +86,7 @@ export async function addBlackoutDateAction(
   if (!date) return { error: "Date is required." };
   const supabase = await createSupabaseServerClient();
   const { error } = await supabase
-    .from("delivery_blackouts")
+    .from("delivery_blackout_dates")
     .insert({ date, reason });
   if (error) return { error: error.message };
   revalidatePath("/admin/settings");
@@ -100,7 +100,7 @@ export async function removeBlackoutDateAction(
   const id = formData.get("id") as string;
   const supabase = await createSupabaseServerClient();
   const { error } = await supabase
-    .from("delivery_blackouts")
+    .from("delivery_blackout_dates")
     .delete()
     .eq("id", id);
   if (error) return { error: error.message };
