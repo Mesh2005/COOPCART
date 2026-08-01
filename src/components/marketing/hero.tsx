@@ -47,7 +47,7 @@ export function Hero() {
             {...fadeUp(0.05)}
             className="mt-5 text-balance text-4xl leading-[1.05] text-brown-900 sm:text-5xl lg:text-6xl"
           >
-            Farm-fresh eggs, <span className="text-brown-500">wholesale</span> — ordered in
+            Farm fresh eggs, <span className="text-brown-500">wholesale</span> ordered in
             minutes, not phone calls.
           </motion.h1>
 

@@ -30,6 +30,13 @@ export interface ReportSummary {
   byPaymentMethod: PaymentMethodSplit[];
 }
 
+/** Raw `order_items` row used for the grade / tray aggregations. */
+interface RawReportItem {
+  line_total: number;
+  qty_trays: number;
+  grade_snapshot: string | null;
+}
+
 export async function getReportData(days = 30): Promise<ReportSummary> {
   const supabase = await createSupabaseServerClient();
   const since = new Date(Date.now() - days * 86400_000).toISOString();
@@ -65,7 +72,10 @@ export async function getReportData(days = 30): Promise<ReportSummary> {
 
   const totalRevenue = (orders ?? []).reduce((s, o) => s + o.total, 0);
   const totalOrders = (orders ?? []).length;
-  const totalTrays = (items ?? []).reduce((s, i: any) => s + i.qty_trays, 0);
+  const totalTrays = (items ?? []).reduce(
+    (s: number, i: RawReportItem) => s + i.qty_trays,
+    0,
+  );
 
   // daily revenue
   const dailyMap: Record<string, DailyRevenue> = {};
@@ -81,7 +91,7 @@ export async function getReportData(days = 30): Promise<ReportSummary> {
 
   // by grade
   const gradeMap: Record<string, GradeRevenue> = {};
-  (items ?? []).forEach((i: any) => {
+  (items ?? []).forEach((i: RawReportItem) => {
     const grade = i.grade_snapshot ?? "Unknown";
     gradeMap[grade] ??= { grade, revenue: 0, trays: 0 };
     gradeMap[grade].revenue += i.line_total;
@@ -107,8 +117,8 @@ export async function getReportData(days = 30): Promise<ReportSummary> {
     totalOrders,
     totalTrays,
     avgOrderValue: totalOrders ? totalRevenue / totalOrders : 0,
-    pendingPayments: (pendingPayments as any)?.count ?? 0,
-    pendingOrders: (pendingOrders as any)?.count ?? 0,
+    pendingPayments: (pendingPayments as unknown as { count: number | null } | null)?.count ?? 0,
+    pendingOrders: (pendingOrders as unknown as { count: number | null } | null)?.count ?? 0,
     daily,
     byGrade,
     byPaymentMethod,

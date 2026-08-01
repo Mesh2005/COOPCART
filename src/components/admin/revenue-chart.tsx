@@ -13,7 +13,6 @@ import {
   PieChart,
   Pie,
   Cell,
-  Legend,
 } from "recharts";
 import type { DailyRevenue, GradeRevenue, PaymentMethodSplit } from "@/lib/data/admin/reports";
 

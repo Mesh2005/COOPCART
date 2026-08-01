@@ -134,7 +134,7 @@ export function DeliveryZoneManager({
     addBlackoutDateAction,
     initialActionState,
   );
-  const [removeState, removeAction, removePending] = useActionState(
+  const [, removeAction, removePending] = useActionState(
     removeBlackoutDateAction,
     initialActionState,
   );

@@ -16,6 +16,24 @@ export interface AdminPaymentRow {
   placed_at: string;
 }
 
+/** Raw joined `payments` row (with the embedded order + business). */
+interface RawPayment {
+  id: string;
+  order_id: string;
+  method: PaymentMethod;
+  status: PaymentStatus;
+  amount: number;
+  slip_url: string | null;
+  uploaded_at: string | null;
+  verified_at: string | null;
+  reject_reason: string | null;
+  orders: {
+    order_number: string;
+    placed_at: string;
+    businesses: { business_name: string };
+  };
+}
+
 export async function getPendingPayments(): Promise<AdminPaymentRow[]> {
   const supabase = await createSupabaseServerClient();
   const { data } = await supabase
@@ -27,7 +45,7 @@ export async function getPendingPayments(): Promise<AdminPaymentRow[]> {
     .eq("status", "slip_uploaded")
     .order("uploaded_at", { ascending: true });
 
-  return (data ?? []).map((p: any) => ({
+  return ((data ?? []) as unknown as RawPayment[]).map((p) => ({
     payment_id: p.id,
     order_id: p.order_id,
     method: p.method,
@@ -58,7 +76,7 @@ export async function getAllPayments(
     .limit(limit);
   if (status) q = q.eq("status", status);
   const { data } = await q;
-  return (data ?? []).map((p: any) => ({
+  return ((data ?? []) as unknown as RawPayment[]).map((p) => ({
     payment_id: p.id,
     order_id: p.order_id,
     method: p.method,

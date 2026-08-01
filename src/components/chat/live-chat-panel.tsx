@@ -128,8 +128,8 @@ export function LiveChatPanel() {
     <>
       <div ref={scrollRef} className="flex-1 space-y-3 overflow-y-auto px-4 py-4">
         <div className="rounded-2xl bg-brown-50 px-3.5 py-2 text-sm text-brown-900">
-          You're connected to Abeyrathna Farms. Send a message and our team will
-          reply here — we'll get back to you as soon as we can.
+          You&apos;re connected to Abeyrathna Farms. Send a message and our team
+          will reply here — we&apos;ll get back to you as soon as we can.
         </div>
         {messages.map((m) => (
           <div

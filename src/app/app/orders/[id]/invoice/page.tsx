@@ -30,7 +30,7 @@ export default async function InvoicePage({
   const data = await getOrderById(id);
   if (!data) notFound();
 
-  const { order, items, payment } = data;
+  const { order, items } = data;
   const business = await getMyBusiness();
   const isBank = order.payment_method === "bank_transfer";
   const bank = isBank ? (await getActiveBankAccounts())[0] : null;

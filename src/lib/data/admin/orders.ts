@@ -38,6 +38,40 @@ export interface AdminOrderDetail extends AdminOrderRow {
   } | null;
 }
 
+/** Raw shape of the joined `orders` row as returned by the list query. */
+interface RawAdminOrder {
+  id: string;
+  order_number: string;
+  status: OrderStatus;
+  fulfillment_type: FulfillmentType;
+  payment_method: PaymentMethod;
+  payment_status: PaymentStatus;
+  total: number;
+  scheduled_date: string | null;
+  placed_at: string;
+  businesses: { business_name: string };
+  delivery_zones: { name: string } | null;
+}
+
+/** Raw shape of the joined `orders` row as returned by the detail query. */
+interface RawAdminOrderDetail extends Omit<RawAdminOrder, never> {
+  subtotal: number;
+  delivery_fee: number;
+  delivery_address: string | null;
+  customer_note: string | null;
+  internal_note: string | null;
+  order_items: AdminOrderDetail["items"];
+  payments:
+    | {
+        id: string;
+        status: PaymentStatus;
+        slip_url: string | null;
+        reject_reason: string | null;
+        uploaded_at: string | null;
+      }[]
+    | null;
+}
+
 export async function getAdminOrders(
   status?: OrderStatus,
   limit = 200,
@@ -55,7 +89,9 @@ export async function getAdminOrders(
     .limit(limit);
   if (status) q = q.eq("status", status);
   const { data } = await q;
-  return (data ?? []).map((o: any) => ({
+  // Supabase types the embedded to-one joins as arrays; at runtime they are
+  // objects, so cast through unknown to the real row shape.
+  return ((data ?? []) as unknown as RawAdminOrder[]).map((o) => ({
     id: o.id,
     order_number: o.order_number,
     business_name: o.businesses.business_name,
@@ -88,24 +124,25 @@ export async function getAdminOrderDetail(
     .eq("id", id)
     .single();
   if (!o) return null;
+  const row = o as unknown as RawAdminOrderDetail;
   return {
-    id: o.id,
-    order_number: o.order_number,
-    business_name: (o as any).businesses.business_name,
-    status: o.status,
-    fulfillment_type: o.fulfillment_type,
-    payment_method: o.payment_method,
-    payment_status: o.payment_status,
-    total: o.total,
-    subtotal: (o as any).subtotal,
-    delivery_fee: (o as any).delivery_fee,
-    scheduled_date: o.scheduled_date,
-    placed_at: o.placed_at,
-    delivery_address: (o as any).delivery_address,
-    customer_note: (o as any).customer_note,
-    internal_note: (o as any).internal_note,
-    delivery_zone_name: (o as any).delivery_zones?.name ?? null,
-    items: (o as any).order_items ?? [],
-    payment: ((o as any).payments?.[0]) ?? null,
+    id: row.id,
+    order_number: row.order_number,
+    business_name: row.businesses.business_name,
+    status: row.status,
+    fulfillment_type: row.fulfillment_type,
+    payment_method: row.payment_method,
+    payment_status: row.payment_status,
+    total: row.total,
+    subtotal: row.subtotal,
+    delivery_fee: row.delivery_fee,
+    scheduled_date: row.scheduled_date,
+    placed_at: row.placed_at,
+    delivery_address: row.delivery_address,
+    customer_note: row.customer_note,
+    internal_note: row.internal_note,
+    delivery_zone_name: row.delivery_zones?.name ?? null,
+    items: row.order_items ?? [],
+    payment: row.payments?.[0] ?? null,
   };
 }

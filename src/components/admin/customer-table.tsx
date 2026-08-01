@@ -23,6 +23,45 @@ const STATUS_STYLE: Record<AccountStatus, string> = {
 };
 
 type SortKey = "business" | "status" | "orders" | "created";
+type SortState = { key: SortKey; dir: "asc" | "desc" };
+
+/** A sortable column header. Hoisted out of CustomerTable so it is a stable
+ *  component identity rather than one redefined on every render. */
+function SortHeader({
+  label,
+  k,
+  sort,
+  onSort,
+  className,
+}: {
+  label: string;
+  k: SortKey;
+  sort: SortState;
+  onSort: (key: SortKey) => void;
+  className?: string;
+}) {
+  const active = sort.key === k;
+  return (
+    <th className={cn("px-4 py-3", className)}>
+      <button
+        type="button"
+        onClick={() => onSort(k)}
+        className="inline-flex items-center gap-1 font-semibold uppercase tracking-wide hover:text-brown-700"
+      >
+        {label}
+        {active ? (
+          sort.dir === "asc" ? (
+            <ArrowUp className="h-3 w-3" />
+          ) : (
+            <ArrowDown className="h-3 w-3" />
+          )
+        ) : (
+          <ChevronsUpDown className="h-3 w-3 opacity-40" />
+        )}
+      </button>
+    </th>
+  );
+}
 
 function StatusBadge({ status }: { status: AccountStatus }) {
   return (
@@ -74,7 +113,7 @@ function ActionButtons({ customer }: { customer: AdminCustomerRow }) {
 
 export function CustomerTable({ customers }: { customers: AdminCustomerRow[] }) {
   const [query, setQuery] = useState("");
-  const [sort, setSort] = useState<{ key: SortKey; dir: "asc" | "desc" }>({
+  const [sort, setSort] = useState<SortState>({
     key: "created",
     dir: "desc",
   });
@@ -108,30 +147,6 @@ export function CustomerTable({ customers }: { customers: AdminCustomerRow[] }) 
     setSort((s) => (s.key === key ? { key, dir: s.dir === "asc" ? "desc" : "asc" } : { key, dir: "asc" }));
   }
 
-  function SortHeader({ label, k, className }: { label: string; k: SortKey; className?: string }) {
-    const active = sort.key === k;
-    return (
-      <th className={cn("px-4 py-3", className)}>
-        <button
-          type="button"
-          onClick={() => toggleSort(k)}
-          className="inline-flex items-center gap-1 font-semibold uppercase tracking-wide hover:text-brown-700"
-        >
-          {label}
-          {active ? (
-            sort.dir === "asc" ? (
-              <ArrowUp className="h-3 w-3" />
-            ) : (
-              <ArrowDown className="h-3 w-3" />
-            )
-          ) : (
-            <ChevronsUpDown className="h-3 w-3 opacity-40" />
-          )}
-        </button>
-      </th>
-    );
-  }
-
   return (
     <div className="space-y-3">
       <div className="relative max-w-xs">
@@ -155,12 +170,12 @@ export function CustomerTable({ customers }: { customers: AdminCustomerRow[] }) 
             <table className="w-full min-w-[820px] text-sm">
               <thead>
                 <tr className="border-b border-line bg-brown-50 text-left text-xs font-semibold uppercase tracking-wide text-muted">
-                  <SortHeader label="Business" k="business" />
+                  <SortHeader label="Business" k="business" sort={sort} onSort={toggleSort} />
                   <th className="px-4 py-3">Type</th>
                   <th className="px-4 py-3">Contact</th>
-                  <SortHeader label="Status" k="status" />
-                  <SortHeader label="Orders" k="orders" />
-                  <SortHeader label="Registered" k="created" />
+                  <SortHeader label="Status" k="status" sort={sort} onSort={toggleSort} />
+                  <SortHeader label="Orders" k="orders" sort={sort} onSort={toggleSort} />
+                  <SortHeader label="Registered" k="created" sort={sort} onSort={toggleSort} />
                   <th className="px-4 py-3">Actions</th>
                 </tr>
               </thead>

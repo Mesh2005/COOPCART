@@ -1,4 +1,5 @@
-import { BarChart3, Package, ShoppingCart, TrendingUp, Wallet } from "lucide-react";
+import Link from "next/link";
+import { BarChart3, Package, ShoppingCart, TrendingUp } from "lucide-react";
 import { getReportData } from "@/lib/data/admin/reports";
 import { StatCard } from "@/components/admin/stat-card";
 import { PageHeader } from "@/components/admin/page-header";
@@ -89,9 +90,9 @@ export default async function AdminReportsPage({
                 {data.pendingOrders} order{data.pendingOrders !== 1 ? "s" : ""}
               </span>{" "}
               pending confirmation.{" "}
-              <a href="/admin/orders" className="font-medium text-brown-700 underline">
+              <Link href="/admin/orders" className="font-medium text-brown-700 underline">
                 View board
-              </a>
+              </Link>
             </p>
           )}
         </div>

@@ -22,11 +22,11 @@ const ROLE_LABELS: Record<string, string> = {
 };
 
 function StaffRowActions({ member }: { member: StaffRow }) {
-  const [roleState, roleAction, rolePending] = useActionState(
+  const [, roleAction, rolePending] = useActionState(
     updateStaffRoleAction,
     initialActionState,
   );
-  const [deactivateState, deactivateAction, deactivatePending] = useActionState(
+  const [, deactivateAction, deactivatePending] = useActionState(
     deactivateStaffAction,
     initialActionState,
   );

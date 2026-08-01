@@ -23,6 +23,32 @@ export interface StockMovementRow {
   created_by_name: string | null;
 }
 
+/** Raw joined `inventory` row (with the embedded product). */
+interface RawInventory {
+  product_id: string;
+  trays_on_hand: number;
+  trays_reserved: number;
+  low_stock_threshold: number;
+  updated_at: string;
+  products: {
+    name: string;
+    size_grade: string;
+    is_active: boolean;
+    sort_order: number | null;
+  };
+}
+
+/** Raw joined `stock_movements` row (with the embedded product). */
+interface RawStockMovement {
+  id: string;
+  type: string;
+  change_trays: number;
+  note: string | null;
+  created_at: string;
+  created_by: string | null;
+  products: { name: string };
+}
+
 export async function getInventory(): Promise<InventoryRow[]> {
   const supabase = await createSupabaseServerClient();
   // Sort in JS by the embedded products.sort_order — PostgREST can't order a
@@ -34,10 +60,12 @@ export async function getInventory(): Promise<InventoryRow[]> {
        products!inner ( name, size_grade, is_active, sort_order )`,
     );
   if (error) throw new Error(`getInventory: ${error.message}`);
-  const rows = (data ?? [])
+  // Supabase types the embedded product as an array; at runtime it is an
+  // object, so cast through unknown to the real row shape.
+  const rows = ((data ?? []) as unknown as RawInventory[])
     .slice()
-    .sort((a: any, b: any) => (a.products.sort_order ?? 0) - (b.products.sort_order ?? 0));
-  return rows.map((i: any) => ({
+    .sort((a, b) => (a.products.sort_order ?? 0) - (b.products.sort_order ?? 0));
+  return rows.map((i) => ({
     product_id: i.product_id,
     product_name: i.products.name,
     size_grade: i.products.size_grade,
@@ -68,12 +96,12 @@ export async function getStockMovements(
   if (productId) q = q.eq("product_id", productId);
   const { data, error } = await q;
   if (error) throw new Error(`getStockMovements: ${error.message}`);
-  const movements = data ?? [];
+  const movements = (data ?? []) as unknown as RawStockMovement[];
 
   // stock_movements.created_by references auth.users, not profiles — resolve
   // the names with a separate lookup rather than a (non-existent) embed.
   const userIds = [
-    ...new Set(movements.map((m: any) => m.created_by).filter(Boolean)),
+    ...new Set(movements.map((m) => m.created_by).filter(Boolean)),
   ];
   const nameMap: Record<string, string | null> = {};
   if (userIds.length > 0) {
@@ -81,10 +109,12 @@ export async function getStockMovements(
       .from("profiles")
       .select("id, full_name")
       .in("id", userIds);
-    (profs ?? []).forEach((p: any) => (nameMap[p.id] = p.full_name));
+    (profs ?? []).forEach(
+      (p: { id: string; full_name: string | null }) => (nameMap[p.id] = p.full_name),
+    );
   }
 
-  return movements.map((m: any) => ({
+  return movements.map((m) => ({
     id: m.id,
     product_name: m.products.name,
     movement_type: m.type,

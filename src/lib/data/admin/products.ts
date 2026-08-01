@@ -27,6 +27,14 @@ export interface AdminProduct {
   } | null;
 }
 
+/** Raw `inventory` row used to attach stock levels to a product. */
+interface RawInventoryRow {
+  product_id: string;
+  trays_on_hand: number;
+  trays_reserved: number;
+  low_stock_threshold: number;
+}
+
 export async function getAdminProducts(): Promise<AdminProduct[]> {
   const supabase = await createSupabaseServerClient();
   const { data: products } = await supabase
@@ -53,23 +61,32 @@ export async function getAdminProducts(): Promise<AdminProduct[]> {
   ]);
 
   const latestPrice: Record<string, number> = {};
-  (prices ?? []).forEach((p: any) => {
+  (prices ?? []).forEach((p: { product_id: string; price_per_tray: number }) => {
     if (!(p.product_id in latestPrice)) latestPrice[p.product_id] = p.price_per_tray;
   });
 
   const tierMap: Record<string, AdminProduct["tiers"]> = {};
-  (tiers ?? []).forEach((t: any) => {
-    (tierMap[t.product_id] ??= []).push({
-      id: t.id,
-      min_qty_trays: t.min_qty_trays,
-      max_qty_trays: t.max_qty_trays,
-      price_per_tray: t.price_per_tray,
-      is_custom_quote: t.is_custom_quote,
-    });
-  });
+  (tiers ?? []).forEach(
+    (t: {
+      product_id: string;
+      id: string;
+      min_qty_trays: number;
+      max_qty_trays: number | null;
+      price_per_tray: number;
+      is_custom_quote: boolean;
+    }) => {
+      (tierMap[t.product_id] ??= []).push({
+        id: t.id,
+        min_qty_trays: t.min_qty_trays,
+        max_qty_trays: t.max_qty_trays,
+        price_per_tray: t.price_per_tray,
+        is_custom_quote: t.is_custom_quote,
+      });
+    },
+  );
 
-  const invMap: Record<string, any> = {};
-  (inv ?? []).forEach((i: any) => (invMap[i.product_id] = i));
+  const invMap: Record<string, RawInventoryRow> = {};
+  (inv ?? []).forEach((i: RawInventoryRow) => (invMap[i.product_id] = i));
 
   return products.map((p) => ({
     id: p.id,

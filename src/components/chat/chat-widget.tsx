@@ -31,7 +31,9 @@ export function ChatWidget() {
 
   // Track whether the live chat is being viewed, for the realtime callback.
   const viewingLive = useRef(false);
-  viewingLive.current = open && tab === "live";
+  useEffect(() => {
+    viewingLive.current = open && tab === "live";
+  }, [open, tab]);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });

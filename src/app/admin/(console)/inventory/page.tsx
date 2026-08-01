@@ -2,7 +2,6 @@ import { AlertTriangle, Boxes } from "lucide-react";
 import { getInventory, getStockMovements } from "@/lib/data/admin/inventory";
 import { ProductionForm } from "@/components/admin/production-form";
 import { PageHeader } from "@/components/admin/page-header";
-import { Badge } from "@/components/ui/badge";
 import { SIZE_GRADE_LABELS } from "@/lib/labels";
 import { formatDate } from "@/lib/format";
 import type { SizeGrade } from "@/lib/types";

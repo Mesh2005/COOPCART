@@ -1,4 +1,3 @@
-import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import type { StaffRole } from "@/lib/types";
 

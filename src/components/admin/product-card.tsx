@@ -27,7 +27,7 @@ export function ProductCard({ product }: { product: AdminProduct }) {
     setPriceAction,
     initialActionState,
   );
-  const [toggleState, toggleAction, togglePending] = useActionState(
+  const [, toggleAction, togglePending] = useActionState(
     toggleProductAction,
     initialActionState,
   );
@@ -35,7 +35,7 @@ export function ProductCard({ product }: { product: AdminProduct }) {
     upsertTierAction,
     initialActionState,
   );
-  const [delState, delAction, delPending] = useActionState(
+  const [, delAction, delPending] = useActionState(
     deleteTierAction,
     initialActionState,
   );

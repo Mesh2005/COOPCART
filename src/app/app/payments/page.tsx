@@ -1,11 +1,9 @@
 import Link from "next/link";
 import { Wallet, ArrowRight } from "lucide-react";
 import { getMyOrders } from "@/lib/data/orders";
-import { buttonVariants } from "@/components/ui/button";
 import { PaymentStatusPill } from "@/components/ui/status-pill";
 import { EmptyState } from "@/components/ui/empty-state";
 import { formatDate, formatLKR } from "@/lib/format";
-import { cn } from "@/lib/utils";
 
 export default async function PaymentsPage() {
   const orders = await getMyOrders();

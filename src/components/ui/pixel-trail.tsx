@@ -1,11 +1,14 @@
 "use client";
 
-import React, { useCallback, useMemo, useRef } from "react";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 import { motion, useAnimationControls } from "framer-motion";
 import { v4 as uuidv4 } from "uuid";
 
 import { cn } from "@/lib/utils";
 import { useDimensions } from "@/components/hooks/use-debounced-dimensions";
+
+/** A pixel DOM node with the imperative fade handler attached to it. */
+type PixelNode = HTMLDivElement & { __animatePixel?: () => void };
 
 interface PixelTrailProps {
   pixelSize: number; // px
@@ -24,7 +27,9 @@ const PixelTrail: React.FC<PixelTrailProps> = ({
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const dimensions = useDimensions(containerRef);
-  const trailId = useRef(uuidv4());
+  // A stable id used during render, so it is state (not a ref, which may not
+  // be read during render).
+  const [trailId] = useState(() => uuidv4());
 
   const handleMouseMove = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
@@ -35,14 +40,14 @@ const PixelTrail: React.FC<PixelTrailProps> = ({
       const y = Math.floor((e.clientY - rect.top) / pixelSize);
 
       const pixelElement = document.getElementById(
-        `${trailId.current}-pixel-${x}-${y}`,
+        `${trailId}-pixel-${x}-${y}`,
       );
       if (pixelElement) {
-        const animatePixel = (pixelElement as any).__animatePixel;
+        const animatePixel = (pixelElement as PixelNode).__animatePixel;
         if (animatePixel) animatePixel();
       }
     },
-    [pixelSize],
+    [pixelSize, trailId],
   );
 
   const columns = useMemo(
@@ -68,7 +73,7 @@ const PixelTrail: React.FC<PixelTrailProps> = ({
           {Array.from({ length: columns }).map((_, colIndex) => (
             <PixelDot
               key={`${colIndex}-${rowIndex}`}
-              id={`${trailId.current}-pixel-${colIndex}-${rowIndex}`}
+              id={`${trailId}-pixel-${colIndex}-${rowIndex}`}
               size={pixelSize}
               fadeDuration={fadeDuration}
               delay={delay}
@@ -98,13 +103,13 @@ const PixelDot: React.FC<PixelDotProps> = React.memo(
         opacity: [1, 0],
         transition: { duration: fadeDuration / 1000, delay: delay / 1000 },
       });
-    }, []);
+    }, [controls, fadeDuration, delay]);
 
     // Attach the animatePixel function to the DOM element
     const ref = useCallback(
       (node: HTMLDivElement | null) => {
         if (node) {
-          (node as any).__animatePixel = animatePixel;
+          (node as PixelNode).__animatePixel = animatePixel;
         }
       },
       [animatePixel],
