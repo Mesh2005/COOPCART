@@ -75,7 +75,10 @@ export default function RootLayout({
       <body className="min-h-dvh font-sans antialiased">
         <script
           dangerouslySetInnerHTML={{
-            __html: `try{var t=localStorage.getItem('theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme:dark)').matches)){document.documentElement.setAttribute('data-theme','dark')}}catch(e){}`,
+            // Default to light. Only apply dark when the user has explicitly
+            // chosen it via the toggle (persisted in localStorage) — the OS
+            // preference no longer forces dark on first load.
+            __html: `try{if(localStorage.getItem('theme')==='dark'){document.documentElement.setAttribute('data-theme','dark')}}catch(e){}`,
           }}
         />
         <a
