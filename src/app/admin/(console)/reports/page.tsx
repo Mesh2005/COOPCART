@@ -2,6 +2,7 @@ import Link from "next/link";
 import { BarChart3, Package, ShoppingCart, TrendingUp } from "lucide-react";
 import { getReportData } from "@/lib/data/admin/reports";
 import { StatCard } from "@/components/admin/stat-card";
+import { AiInsights } from "@/components/admin/ai-insights";
 import { PageHeader } from "@/components/admin/page-header";
 import {
   RevenueAreaChart,
@@ -70,6 +71,8 @@ export default async function AdminReportsPage({
           accent="brown"
         />
       </div>
+
+      <AiInsights days={validDays} />
 
       {data.pendingPayments > 0 || data.pendingOrders > 0 ? (
         <div className="rounded-2xl border border-yolk-300 bg-yolk-50 px-5 py-4 text-sm">

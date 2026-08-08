@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { generateAi } from "@/lib/ai";
 
 export const runtime = "nodejs";
 
@@ -104,43 +105,21 @@ export async function POST(req: Request) {
   }
 
   const lastUser = [...messages].reverse().find((m) => m.role === "user")?.content ?? "";
-  const apiKey = process.env.OPENAI_API_KEY;
 
-  // No key → deterministic FAQ answer.
-  if (!apiKey) {
-    return NextResponse.json({ answer: faqAnswer(lastUser), source: "faq" });
+  const ai = await generateAi(
+    [
+      { role: "system", content: SYSTEM_PROMPT },
+      ...messages.slice(-8).map((m) => ({
+        role: m.role,
+        content: String(m.content).slice(0, 1000),
+      })),
+    ],
+    { maxTokens: 300, temperature: 0.3 },
+  );
+
+  if (ai) {
+    return NextResponse.json({ answer: ai.text, source: ai.provider });
   }
-
-  try {
-    const res = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: process.env.OPENAI_MODEL || "gpt-4o-mini",
-        temperature: 0.3,
-        max_tokens: 300,
-        messages: [
-          { role: "system", content: SYSTEM_PROMPT },
-          ...messages.slice(-8).map((m) => ({
-            role: m.role,
-            content: String(m.content).slice(0, 1000),
-          })),
-        ],
-      }),
-    });
-
-    if (!res.ok) {
-      // Fall back gracefully on quota/errors.
-      return NextResponse.json({ answer: faqAnswer(lastUser), source: "faq" });
-    }
-    const data = await res.json();
-    const answer =
-      data?.choices?.[0]?.message?.content?.trim() || faqAnswer(lastUser);
-    return NextResponse.json({ answer, source: "openai" });
-  } catch {
-    return NextResponse.json({ answer: faqAnswer(lastUser), source: "faq" });
-  }
+  // No provider configured, or all failed → deterministic FAQ answer.
+  return NextResponse.json({ answer: faqAnswer(lastUser), source: "faq" });
 }

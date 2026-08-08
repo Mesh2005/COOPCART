@@ -1,4 +1,6 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { SIZE_GRADE_LABELS } from "@/lib/labels";
+import type { SizeGrade } from "@/lib/types";
 
 export interface DailyRevenue {
   date: string;
@@ -44,8 +46,8 @@ export async function getReportData(days = 30): Promise<ReportSummary> {
   const [
     { data: orders },
     { data: items },
-    { data: pendingPayments },
-    { data: pendingOrders },
+    { count: pendingPaymentsCount },
+    { count: pendingOrdersCount },
   ] = await Promise.all([
     supabase
       .from("orders")
@@ -92,7 +94,10 @@ export async function getReportData(days = 30): Promise<ReportSummary> {
   // by grade
   const gradeMap: Record<string, GradeRevenue> = {};
   (items ?? []).forEach((i: RawReportItem) => {
-    const grade = i.grade_snapshot ?? "Unknown";
+    const raw = i.grade_snapshot ?? "Unknown";
+    // Show the friendly label (e.g. "Extra Large") rather than the raw
+    // snapshot value ("extra_large"); fall back to the raw value if unknown.
+    const grade = SIZE_GRADE_LABELS[raw as SizeGrade] ?? raw;
     gradeMap[grade] ??= { grade, revenue: 0, trays: 0 };
     gradeMap[grade].revenue += i.line_total;
     gradeMap[grade].trays += i.qty_trays;
@@ -117,8 +122,8 @@ export async function getReportData(days = 30): Promise<ReportSummary> {
     totalOrders,
     totalTrays,
     avgOrderValue: totalOrders ? totalRevenue / totalOrders : 0,
-    pendingPayments: (pendingPayments as unknown as { count: number | null } | null)?.count ?? 0,
-    pendingOrders: (pendingOrders as unknown as { count: number | null } | null)?.count ?? 0,
+    pendingPayments: pendingPaymentsCount ?? 0,
+    pendingOrders: pendingOrdersCount ?? 0,
     daily,
     byGrade,
     byPaymentMethod,
