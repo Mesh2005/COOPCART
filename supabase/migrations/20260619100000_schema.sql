@@ -8,16 +8,46 @@ create extension if not exists pgcrypto;
 -- ---------------------------------------------------------------------------
 -- Enums
 -- ---------------------------------------------------------------------------
-create type user_role as enum ('admin','manager','sales','inventory','delivery','customer');
-create type account_status as enum ('pending','approved','suspended','rejected');
-create type business_type as enum ('shop','bakery','restaurant','hotel','catering','wholesaler','other');
-create type egg_color as enum ('brown','white','tinted');
-create type size_grade as enum ('small','medium','large','extra_large','jumbo','mixed');
-create type order_status as enum ('pending','confirmed','packed','out_for_delivery','ready_for_pickup','delivered','completed','cancelled');
-create type payment_method as enum ('bank_transfer','cod');
-create type payment_status as enum ('unpaid','slip_uploaded','verified','rejected','paid_cod');
-create type fulfillment_type as enum ('delivery','pickup');
-create type stock_movement_type as enum ('production_in','reserve','release','fulfill','adjustment','wastage');
+do $$ begin
+  create type user_role as enum ('admin','manager','sales','inventory','delivery','customer');
+exception when duplicate_object then null;
+end $$;
+do $$ begin
+  create type account_status as enum ('pending','approved','suspended','rejected');
+exception when duplicate_object then null;
+end $$;
+do $$ begin
+  create type business_type as enum ('shop','bakery','restaurant','hotel','catering','wholesaler','other');
+exception when duplicate_object then null;
+end $$;
+do $$ begin
+  create type egg_color as enum ('brown','white','tinted');
+exception when duplicate_object then null;
+end $$;
+do $$ begin
+  create type size_grade as enum ('small','medium','large','extra_large','jumbo','mixed');
+exception when duplicate_object then null;
+end $$;
+do $$ begin
+  create type order_status as enum ('pending','confirmed','packed','out_for_delivery','ready_for_pickup','delivered','completed','cancelled');
+exception when duplicate_object then null;
+end $$;
+do $$ begin
+  create type payment_method as enum ('bank_transfer','cod');
+exception when duplicate_object then null;
+end $$;
+do $$ begin
+  create type payment_status as enum ('unpaid','slip_uploaded','verified','rejected','paid_cod');
+exception when duplicate_object then null;
+end $$;
+do $$ begin
+  create type fulfillment_type as enum ('delivery','pickup');
+exception when duplicate_object then null;
+end $$;
+do $$ begin
+  create type stock_movement_type as enum ('production_in','reserve','release','fulfill','adjustment','wastage');
+exception when duplicate_object then null;
+end $$;
 
 -- ---------------------------------------------------------------------------
 -- updated_at helper
@@ -32,7 +62,7 @@ $$;
 -- ---------------------------------------------------------------------------
 -- Tables
 -- ---------------------------------------------------------------------------
-create table delivery_zones (
+create table if not exists delivery_zones (
   id uuid primary key default gen_random_uuid(),
   name text not null unique,
   base_fee numeric(12,2) not null default 0,
@@ -43,7 +73,7 @@ create table delivery_zones (
   updated_at timestamptz not null default now()
 );
 
-create table profiles (
+create table if not exists profiles (
   id uuid primary key references auth.users(id) on delete cascade,
   role user_role not null default 'customer',
   full_name text,
@@ -55,7 +85,7 @@ create table profiles (
   updated_at timestamptz not null default now()
 );
 
-create table businesses (
+create table if not exists businesses (
   id uuid primary key default gen_random_uuid(),
   owner_user_id uuid not null references auth.users(id) on delete cascade,
   business_name text not null,
@@ -76,10 +106,10 @@ create table businesses (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
-create index businesses_owner_idx on businesses(owner_user_id);
-create index businesses_status_idx on businesses(status);
+create index if not exists businesses_owner_idx on businesses(owner_user_id);
+create index if not exists businesses_status_idx on businesses(status);
 
-create table products (
+create table if not exists products (
   id uuid primary key default gen_random_uuid(),
   name text not null,
   egg_color egg_color not null default 'brown',
@@ -95,16 +125,16 @@ create table products (
   updated_at timestamptz not null default now()
 );
 
-create table product_prices (
+create table if not exists product_prices (
   id uuid primary key default gen_random_uuid(),
   product_id uuid not null references products(id) on delete cascade,
   price_per_tray numeric(12,2) not null,
   effective_from timestamptz not null default now(),
   set_by uuid references auth.users(id)
 );
-create index product_prices_lookup_idx on product_prices(product_id, effective_from desc);
+create index if not exists product_prices_lookup_idx on product_prices(product_id, effective_from desc);
 
-create table price_tiers (
+create table if not exists price_tiers (
   id uuid primary key default gen_random_uuid(),
   product_id uuid not null references products(id) on delete cascade,
   min_qty_trays int not null,
@@ -115,7 +145,7 @@ create table price_tiers (
   unique (product_id, min_qty_trays)
 );
 
-create table inventory (
+create table if not exists inventory (
   product_id uuid primary key references products(id) on delete cascade,
   trays_on_hand int not null default 0,
   trays_reserved int not null default 0,
@@ -123,7 +153,7 @@ create table inventory (
   updated_at timestamptz not null default now()
 );
 
-create table stock_movements (
+create table if not exists stock_movements (
   id uuid primary key default gen_random_uuid(),
   product_id uuid not null references products(id) on delete cascade,
   change_trays int not null,
@@ -133,9 +163,9 @@ create table stock_movements (
   created_by uuid references auth.users(id),
   created_at timestamptz not null default now()
 );
-create index stock_movements_product_idx on stock_movements(product_id, created_at desc);
+create index if not exists stock_movements_product_idx on stock_movements(product_id, created_at desc);
 
-create table cart_items (
+create table if not exists cart_items (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references auth.users(id) on delete cascade,
   product_id uuid not null references products(id) on delete cascade,
@@ -147,7 +177,7 @@ create table cart_items (
 
 create sequence if not exists order_number_seq;
 
-create table orders (
+create table if not exists orders (
   id uuid primary key default gen_random_uuid(),
   order_number text not null unique,
   business_id uuid not null references businesses(id),
@@ -172,11 +202,11 @@ create table orders (
   cancel_reason text,
   updated_at timestamptz not null default now()
 );
-create index orders_business_idx on orders(business_id);
-create index orders_status_idx on orders(status);
-create index orders_placed_idx on orders(placed_at desc);
+create index if not exists orders_business_idx on orders(business_id);
+create index if not exists orders_status_idx on orders(status);
+create index if not exists orders_placed_idx on orders(placed_at desc);
 
-create table order_items (
+create table if not exists order_items (
   id uuid primary key default gen_random_uuid(),
   order_id uuid not null references orders(id) on delete cascade,
   product_id uuid references products(id),
@@ -187,9 +217,9 @@ create table order_items (
   qty_trays int not null check (qty_trays > 0),
   line_total numeric(12,2) not null
 );
-create index order_items_order_idx on order_items(order_id);
+create index if not exists order_items_order_idx on order_items(order_id);
 
-create table payments (
+create table if not exists payments (
   id uuid primary key default gen_random_uuid(),
   order_id uuid not null references orders(id) on delete cascade,
   method payment_method not null,
@@ -204,9 +234,9 @@ create table payments (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
-create index payments_order_idx on payments(order_id);
+create index if not exists payments_order_idx on payments(order_id);
 
-create table delivery_blackout_dates (
+create table if not exists delivery_blackout_dates (
   id uuid primary key default gen_random_uuid(),
   zone_id uuid references delivery_zones(id) on delete cascade,
   date date not null,
@@ -214,7 +244,7 @@ create table delivery_blackout_dates (
   created_at timestamptz not null default now()
 );
 
-create table deliveries (
+create table if not exists deliveries (
   id uuid primary key default gen_random_uuid(),
   order_id uuid not null references orders(id) on delete cascade unique,
   assigned_user_id uuid references auth.users(id),
@@ -225,7 +255,7 @@ create table deliveries (
   updated_at timestamptz not null default now()
 );
 
-create table bank_accounts (
+create table if not exists bank_accounts (
   id uuid primary key default gen_random_uuid(),
   account_name text not null,
   bank_name text not null,
@@ -237,7 +267,7 @@ create table bank_accounts (
   updated_at timestamptz not null default now()
 );
 
-create table app_settings (
+create table if not exists app_settings (
   id boolean primary key default true,
   order_cutoff_time time not null default '18:00',
   min_order_trays int not null default 5,
@@ -253,7 +283,7 @@ create table app_settings (
   constraint app_settings_singleton check (id)
 );
 
-create table notifications (
+create table if not exists notifications (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references auth.users(id) on delete cascade,
   type text not null,
@@ -263,9 +293,9 @@ create table notifications (
   is_read boolean not null default false,
   created_at timestamptz not null default now()
 );
-create index notifications_user_idx on notifications(user_id, is_read);
+create index if not exists notifications_user_idx on notifications(user_id, is_read);
 
-create table audit_log (
+create table if not exists audit_log (
   id uuid primary key default gen_random_uuid(),
   actor_user_id uuid references auth.users(id),
   action text not null,
@@ -278,17 +308,17 @@ create table audit_log (
 -- ---------------------------------------------------------------------------
 -- updated_at triggers
 -- ---------------------------------------------------------------------------
-create trigger t_delivery_zones_updated before update on delivery_zones for each row execute function set_updated_at();
-create trigger t_profiles_updated before update on profiles for each row execute function set_updated_at();
-create trigger t_businesses_updated before update on businesses for each row execute function set_updated_at();
-create trigger t_products_updated before update on products for each row execute function set_updated_at();
-create trigger t_inventory_updated before update on inventory for each row execute function set_updated_at();
-create trigger t_cart_items_updated before update on cart_items for each row execute function set_updated_at();
-create trigger t_orders_updated before update on orders for each row execute function set_updated_at();
-create trigger t_payments_updated before update on payments for each row execute function set_updated_at();
-create trigger t_deliveries_updated before update on deliveries for each row execute function set_updated_at();
-create trigger t_bank_accounts_updated before update on bank_accounts for each row execute function set_updated_at();
-create trigger t_app_settings_updated before update on app_settings for each row execute function set_updated_at();
+create or replace trigger t_delivery_zones_updated before update on delivery_zones for each row execute function set_updated_at();
+create or replace trigger t_profiles_updated before update on profiles for each row execute function set_updated_at();
+create or replace trigger t_businesses_updated before update on businesses for each row execute function set_updated_at();
+create or replace trigger t_products_updated before update on products for each row execute function set_updated_at();
+create or replace trigger t_inventory_updated before update on inventory for each row execute function set_updated_at();
+create or replace trigger t_cart_items_updated before update on cart_items for each row execute function set_updated_at();
+create or replace trigger t_orders_updated before update on orders for each row execute function set_updated_at();
+create or replace trigger t_payments_updated before update on payments for each row execute function set_updated_at();
+create or replace trigger t_deliveries_updated before update on deliveries for each row execute function set_updated_at();
+create or replace trigger t_bank_accounts_updated before update on bank_accounts for each row execute function set_updated_at();
+create or replace trigger t_app_settings_updated before update on app_settings for each row execute function set_updated_at();
 
 -- ---------------------------------------------------------------------------
 -- Role / ownership helpers (SECURITY DEFINER so RLS policies can use them
@@ -346,7 +376,7 @@ begin
 end;
 $$;
 
-create trigger on_auth_user_created
+create or replace trigger on_auth_user_created
   after insert on auth.users
   for each row execute function handle_new_user();
 
@@ -360,7 +390,7 @@ begin
   return new;
 end;
 $$;
-create trigger profiles_guard_role before update on profiles
+create or replace trigger profiles_guard_role before update on profiles
   for each row execute function guard_profile_role();
 
 -- Prevent customers from changing their own account status / credit limit.
@@ -376,5 +406,5 @@ begin
   return new;
 end;
 $$;
-create trigger businesses_guard before update on businesses
+create or replace trigger businesses_guard before update on businesses
   for each row execute function guard_business();
